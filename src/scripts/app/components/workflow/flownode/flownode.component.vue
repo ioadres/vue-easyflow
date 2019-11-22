@@ -4,14 +4,14 @@
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave"
-    v-bind:class="{selected: node.options.selected === id}">
+    v-bind:class="{selected: node.options.selected === node.id}">
     <div class="node-port node-input"
        @mousedown="inputMouseDown"
        @mouseup="inputMouseUp">
     </div>
     <div class="node-main">
-      <div v-text="type" class="node-type"></div>
-      <div v-text="label" class="node-label"></div>
+      <div v-text="node.type" class="node-type"></div>
+      <div v-text="node.label" class="node-label"></div>
     </div>
     <div class="node-port node-output" 
       @mousedown="outputMouseDown">
@@ -25,7 +25,7 @@ import { Component, Vue, Prop, Watch  } from 'vue-property-decorator';
 import {INode, Node} from './flownode.type';
 @Component
 export default class FlowNode extends Vue {
-    @Prop() node! : INode
+    @Prop() node: INode = new Node()
  
     get nodeStyle() {
           return {
@@ -37,7 +37,6 @@ export default class FlowNode extends Vue {
 
  constructor() {
    super();
-   this.node = new Node();
    this.node.options.centerX = 1024;
    this.node.options.scale = 1;
    this.node.options.centerY = 140;

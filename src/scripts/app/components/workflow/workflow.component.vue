@@ -5,7 +5,7 @@
     @mousemove="handleMove" 
     @mouseup="handleUp"
     @mousedown="handleDown">
-    <svg width="100%" :height="`${height}px`">
+    <svg width="100%" :height="`${workflow.height}px`">
       <flow-link v-bind.sync="link" 
         v-for="(link, index) in lines" 
         :key="`link${index}`"
@@ -30,8 +30,8 @@ import { getMousePosition } from '../core/position'
 
 import { Component, Vue, Prop, Watch  } from 'vue-property-decorator';
 import {IWorkFlow} from './workflow.type';
-import {ILink} from './flowlink/flowlink.type'
-import {INode} from './flownode/flownode.type'
+import {ILink, Link} from './flowlink/flowlink.type'
+import {INode, Node} from './flownode/flownode.type'
 @Component({  
   components: { FlowLink, FlowNode }
 })
@@ -157,20 +157,12 @@ export default class WorkFlow extends Vue {
           let maxID = Math.max(0, ...this.workflow.scene.links.map((link) => {
             return link.id
           }))
-          const newLink: ILink = {
-            id: maxID + 1,
-            from: this.workflow.draggingLink.from,
-            to: index,
-            start: {
-              x:0,
-              y:0,
-            },
-            end : {
-              x:0,
-              y:0,
-            },
-            show: {delete:false}
-          };
+          const newLink = new Link();
+
+            newLink.id =  maxID + 1;
+            newLink.from = this.workflow.draggingLink.from;
+            newLink.to = index;
+
           this.workflow.scene.links.push(newLink)
           this.$emit('linkAdded', newLink)
         }

@@ -16,11 +16,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch  } from 'vue-property-decorator';
-import {ILink} from './flowlink.type';
+import {ILink, Link} from './flowlink.type';
 @Component
 export default class FlowLink extends Vue {
-    @Prop() link! : ILink
-
+    @Prop() link:ILink =  new Link();
+constructor() {
+  super()
+  this.link =  new Link();
+}
     get pathStyle() {
       return {
         stroke: 'rgb(255, 136, 85)',

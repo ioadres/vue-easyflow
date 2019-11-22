@@ -10,6 +10,7 @@ export class Node implements INode {
        centerX : 0,
        centerY : 0,
        scale: 0, 
+       selected:0,
     };
     show: IShow = {
         delete:false
@@ -34,7 +35,8 @@ export interface IPosition {
 export interface IOption {
     centerX : number,
     scale:number,
-    centerY:number
+    centerY:number,
+    selected:number,
 }
 
 export interface IShow {

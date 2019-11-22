@@ -2,11 +2,6 @@
   <div class="app">
    <h1> simple flowchart</h1>
     <div class="tool-wrapper">
-      <select v-model="newNodeType">
-        <option v-for="(item, index) in nodeCategory" :key="index" :value="index">{{item}}</option>
-      </select>
-      <input type="text" v-model="newNodeLabel" placeholder="Input node label">
-      <button @click="addNode">ADD</button>
     </div>
     
     <work-flow :workflow.sync="workflow" />
@@ -64,7 +59,8 @@ export default class extends Vue {
             }
           },
           {
-            id: 6,position : {   
+            id: 6,
+            position : {   
             x: -557,
             y: 80,
             },
