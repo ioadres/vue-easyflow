@@ -1,5 +1,5 @@
-import { INode } from './flownode/flownode.type'
-import { ILink } from './line-link/type'
+import { INode } from './card/type'
+import { ILine } from './line-link/type'
 
 export class WorkFlow implements IWorkFlow {
     scene!: Scene;
@@ -19,13 +19,13 @@ export class Scene implements IScene {
     scale: number
     centerY: number
     nodes: INode[]
-    links: ILink[]
+    lines: ILine[]
 
     constructor() {
         this.centerX = 0;
         this.centerY = 0;
         this.nodes = [];
-        this.links = [];
+        this.lines = [];
         this.scale = 0;
     }
 }
@@ -35,7 +35,7 @@ export interface IScene {
     scale: number,
     centerY: number,
     nodes: INode[],
-    links: ILink[]
+    lines: ILine[]
 }
 
 export class Action {
@@ -57,3 +57,18 @@ export class RootDivOffset {
     left: number = 0;
 }
 
+
+export class Option implements IOption {
+    centerX = 0
+    scale = 0
+    centerY = 0
+    selected = 0
+}
+
+
+export interface IOption {
+    centerX: number,
+    scale: number,
+    centerY: number,
+    selected: number | null,
+}

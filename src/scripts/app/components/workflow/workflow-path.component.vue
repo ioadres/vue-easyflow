@@ -9,13 +9,14 @@
   >
     <svg width="100%" :height="`${workflow.height}px`">
       <line-link
-        :link="link"
-        v-for="(link, index) in lines"
-        :key="`link${index}`"
-        @deleteLink="linkDelete(link.id)"
+        :line="line"
+        v-for="(line, index) in lines"
+        :key="`line${index}`"
+        @deleteLink="linkDelete(line.id)"
       />
     </svg>
-    <flow-node
+
+    <card
       :node.sync="node"
       v-for="(node, index) in workflow.scene.nodes"
       :key="`node${index}`"
@@ -23,21 +24,21 @@
       @linkingStart="linkingStart(node.id)"
       @linkingStop="linkingStop(node.id)"
       @nodeSelected="nodeSelected(node.id, $event)"
-    ></flow-node>
+    ></card>
   </div>
 </template>
 
 <script lang="ts">
 import LineLink from "./line-link/line-link.component.vue";
-import FlowNode from "./flownode/flownode.component.vue";
-import { getMousePosition } from "../core/position";
+import Card from "./card/card.component.vue";
 
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { IWorkFlow, WorkFlow, Action, Mouse } from "./workflow.type";
-import { ILink, Link } from "./line-link/type";
-import { INode, Node, Option } from "./flownode/flownode.type";
+import { getMousePosition } from "../core/position";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { IWorkFlow, Action, Mouse, Option } from "./type";
+import { ILink, Link, Line } from "./line-link/type";
 @Component({
-  components: { LineLink, FlowNode }
+  components: { LineLink, Card },
+  name: "WorkFlowPath"
 })
 export default class WorkFlowPath extends Vue {
   @Prop() workflow!: IWorkFlow;
@@ -58,51 +59,49 @@ export default class WorkFlowPath extends Vue {
   }
 
   get lines() {
-    const lines = this.workflow.scene.links.map(link => {
-      const fromNode = this.findNodeWithID(link.from);
-      const toNode = this.findNodeWithID(link.to);
+    const lines = this.workflow.scene.lines.map(line => {
+      const fromNode = this.findNodeWithID(line.from);
+      const toNode = this.findNodeWithID(line.to);
       let x = 0,
         y = 0,
         cy = 0,
         cx = 0,
         ex = 0,
         ey = 0;
-      if (fromNode !== undefined) {
-        x = this.workflow.scene.centerX + fromNode.position.x;
-        y = this.workflow.scene.centerY + fromNode.position.y;
-      }
+
+      x = this.workflow.scene.centerX + fromNode!.position.x;
+      y = this.workflow.scene.centerY + fromNode!.position.y;
       [cx, cy] = this.getPortPosition("bottom", x, y);
-      if (toNode !== undefined) {
-        x = this.workflow.scene.centerX + toNode.position.x;
-        y = this.workflow.scene.centerY + toNode.position.y;
-      }
+
+      x = this.workflow.scene.centerX + toNode!.position.x;
+      y = this.workflow.scene.centerY + toNode!.position.y;
       [ex, ey] = this.getPortPosition("top", x, y);
-      let currentLink = new Link();
-      currentLink.id = link.id;
-      currentLink.start.x = cx;
-      currentLink.start.y = cy;
-      currentLink.end.x = ex;
-      currentLink.end.y = ey;
-      return currentLink;
+
+      line.link.start.x = cx;
+      line.link.start.y = cy;
+      line.link.end.x = ex;
+      line.link.end.y = ey;
+
+      return line;
     });
+
     if (this.draggingLink) {
       let x = 0,
         y = 0,
         cy = 0,
         cx = 0;
       const fromNode = this.findNodeWithID(this.draggingLink.from);
-      if (fromNode !== undefined) {
-        x = this.workflow.scene.centerX + fromNode.position.x;
-        y = this.workflow.scene.centerY + fromNode.position.y;
-      }
+
+      x = this.workflow.scene.centerX + fromNode!.position.x;
+      y = this.workflow.scene.centerY + fromNode!.position.y;
       [cx, cy] = this.getPortPosition("bottom", x, y);
 
       // push temp dragging link, mouse cursor postion = link end postion
-      let currentLink = new Link();
-      currentLink.start.x = cx;
-      currentLink.start.y = cy;
-      currentLink.end.x = this.draggingLink.mx;
-      currentLink.end.y = this.draggingLink.my;
+      let currentLink = new Line();
+      currentLink.link.start.x = cx;
+      currentLink.link.start.y = cy;
+      currentLink.link.end.x = this.draggingLink.mx;
+      currentLink.link.end.y = this.draggingLink.my;
 
       lines.push(currentLink);
     }
@@ -121,7 +120,6 @@ export default class WorkFlowPath extends Vue {
     } else if (type === "bottom") {
       return [x + 40, y + 80];
     }
-
     return [0, 0];
   }
 
@@ -138,23 +136,23 @@ export default class WorkFlowPath extends Vue {
     // add new Link
     if (this.draggingLink && this.draggingLink.from !== index) {
       // check link existence
-      const existed = this.workflow.scene.links.find(link => {
-        return link.from === this.draggingLink.from && link.to === index;
+      const existed = this.workflow.scene.lines.find(line => {
+        return line.from === this.draggingLink.from && line.to === index;
       });
       if (!existed) {
         let maxID = Math.max(
           0,
-          ...this.workflow.scene.links.map(link => {
-            return link.id;
+          ...this.workflow.scene.lines.map(line => {
+            return line.id;
           })
         );
-        const newLink = new Link();
+        const newLink = new Line();
 
         newLink.id = maxID + 1;
         newLink.from = this.draggingLink.from;
         newLink.to = index;
 
-        this.workflow.scene.links.push(newLink);
+        this.workflow.scene.lines.push(newLink);
         this.$emit("linkAdded", newLink);
       }
     }
@@ -162,25 +160,26 @@ export default class WorkFlowPath extends Vue {
   }
 
   linkDelete(id: number) {
-    const deletedLink = this.workflow.scene.links.find(item => {
+    const deletedLink = this.workflow.scene.lines.find(item => {
       return item.id === id;
     });
     if (deletedLink) {
-      this.workflow.scene.links = this.workflow.scene.links.filter(item => {
+      this.workflow.scene.lines = this.workflow.scene.lines.filter(item => {
         return item.id !== id;
       });
-      this.$emit("linkBreak", deletedLink);
+      this.$emit("linkDelete", deletedLink);
     }
   }
 
   nodeSelected(id: number, e: any) {
     this.action.dragging = id;
     this.action.selected = id;
-    this.$emit("nodeClick", id);
     this.mouse.lastX =
       e.pageX || e.clientX + document.documentElement.scrollLeft;
     this.mouse.lastY =
       e.pageY || e.clientY + document.documentElement.scrollTop;
+
+    this.$emit("nodeClick", id);
   }
 
   handleMove(e: any) {
@@ -208,7 +207,6 @@ export default class WorkFlowPath extends Vue {
       this.mouse.lastY = this.mouse.y;
       this.workflow.scene.centerX += diffX;
       this.workflow.scene.centerY += diffY;
-      // this.hasDragged = true
     }
   }
 
@@ -224,7 +222,7 @@ export default class WorkFlowPath extends Vue {
       if (
         typeof target.className === "string" &&
         target.className.indexOf("node-delete") > -1 &&
-        this.action.dragging !== null 
+        this.action.dragging !== null
       ) {
         this.nodeDelete(this.action.dragging);
       }
@@ -236,7 +234,6 @@ export default class WorkFlowPath extends Vue {
 
   handleDown(e: any) {
     const target = e.target || e.srcElement;
-    // console.log('for scroll', target, e.keyCode, e.which)
     if (
       (target === this.$el || target.matches("svg, svg *")) &&
       e.which === 1
@@ -262,23 +259,14 @@ export default class WorkFlowPath extends Vue {
 
     this.workflow.scene.nodes[index].position.x = left;
     this.workflow.scene.nodes[index].position.y = top;
-/*
-    this.$set(
-      this.workflow.scene.nodes,
-      index,
-      Object.assign(this.workflow.scene.nodes[index], {
-        x: left,
-        y: top
-      })
-    );*/
   }
 
   nodeDelete(id: number) {
     this.workflow.scene.nodes = this.workflow.scene.nodes.filter(node => {
       return node.id !== id;
     });
-    this.workflow.scene.links = this.workflow.scene.links.filter(link => {
-      return link.from !== id && link.to !== id;
+    this.workflow.scene.lines = this.workflow.scene.lines.filter(line => {
+      return line.from !== id && line.to !== id;
     });
     this.$emit("nodeDelete", id);
   }

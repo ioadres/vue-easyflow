@@ -1,6 +1,6 @@
 <template>
   <g @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
-    <path :d="getLine" :style="lineStyle"></path>
+    <path :d="lineTransform" :style="lineStyle"></path>
     <a v-if="show.delete" @click="deleteLink">
       <text text-anchor="middle" :transform="arrowTransform" font-size="22">&times;</text>
     </a>
@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { ILink } from "./type";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { ILine } from "./type";
 
 @Component({ name: "LineLink" })
 export default class LineLink extends Vue {
-  @Prop() link!: ILink;
+  @Prop() line!: ILine;
   show: any = {
     delete: false
   };
@@ -39,11 +39,11 @@ export default class LineLink extends Vue {
     const degree = this.caculateRotation();
     return `translate(${arrowX}, ${arrowY}) rotate(${degree})`;
   }
-  get getLine() {
-    let cx = this.link.start.x,
-      cy = this.link.start.y,
-      ex = this.link.end.x,
-      ey = this.link.end.y;
+  get lineTransform() {
+    let cx = this.line.link.start.x,
+      cy = this.line.link.start.y,
+      ex = this.line.link.end.x,
+      ey = this.line.link.end.y;
     let x1 = cx,
       y1 = cy + 50,
       x2 = ex,
@@ -53,7 +53,7 @@ export default class LineLink extends Vue {
 
   handleMouseOver() {
     
-    if (this.link.id) {
+    if (this.line.id) {
       this.show.delete = true;
     }
   }
@@ -64,15 +64,15 @@ export default class LineLink extends Vue {
 
   caculateCenterPoint() {
     // caculate arrow position: the center point between start and end
-    const dx = (this.link.end.x - this.link.start.x) / 2;
-    const dy = (this.link.end.y - this.link.start.y) / 2;
-    return [this.link.start.x + dx, this.link.start.y + dy];
+    const dx = (this.line.link.end.x - this.line.link.start.x) / 2;
+    const dy = (this.line.link.end.y - this.line.link.start.y) / 2;
+    return [this.line.link.start.x + dx, this.line.link.start.y + dy];
   }
   caculateRotation() {
     // caculate arrow rotation
     const angle = -Math.atan2(
-      this.link.end.x - this.link.start.x,
-      this.link.end.y - this.link.start.y
+      this.line.link.end.x - this.line.link.start.x,
+      this.line.link.end.y - this.line.link.start.y
     );
     const degree = (angle * 180) / Math.PI;
     return degree < 0 ? degree + 360 : degree;

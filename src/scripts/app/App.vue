@@ -7,7 +7,7 @@
       :workflow.sync="workflow"
       @nodeClick="nodeClick"
       @nodeDelete="nodeDelete"
-      @linkBreak="linkBreak"
+      @linkDelete="linkDelete"
       @linkAdded="linkAdded"
       @canvasClick="canvasClick"
     />
@@ -16,19 +16,19 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import WorkFlowPath from "./components/workflow/workflow.component.vue";
-import { IWorkFlow } from "./components/workflow/workflow.type";
+import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
+import { IWorkFlow } from "./components/workflow/type";
 import { ILink } from "./components/workflow/line-link/type";
-import { Position} from "./components/core/type";
-import { Node } from "./components/workflow/flownode/flownode.type";
+import { Node } from "./components/workflow/card/type";
 @Component({
   components: { WorkFlowPath }
 })
+
 export default class extends Vue {
   public name = "App";
   workflow: IWorkFlow = {
     scene: {
-      links: [
+      lines: [
       ],
       centerX: 1024,
       centerY: 140,
@@ -85,8 +85,8 @@ export default class extends Vue {
   nodeDelete(id: number) {
     console.log("node delete", id);
   }
-  linkBreak(id: number) {
-    console.log("link break", id);
+  linkDelete(id: number) {
+    console.log("link delete", id);
   }
   linkAdded(link: ILink) {
     console.log("new link added:", link);

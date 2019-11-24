@@ -1,4 +1,3 @@
-
 <template>
   <div
     class="flowchart-node"
@@ -19,14 +18,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { INode, Node, IOption } from "./flownode.type";
-@Component({ name: "FlowNode" })
-export default class FlowNode extends Vue {
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { INode } from "./type";
+import { IOption } from "./../../workflow/type";
+
+@Component({ name: "Card" })
+export default class Card extends Vue {
   @Prop() node!: INode;
   @Prop() nodeOptions!: IOption;
 
-  show: any = {
+  public show: any = {
     delete: false
   };
 
@@ -44,16 +45,14 @@ export default class FlowNode extends Vue {
       top:
         this.nodeOptions.centerY +
         this.node.position.y * this.nodeOptions.scale +
-        "px", // remove: this.options.offsetTop +
+        "px",
       left:
         this.nodeOptions.centerX +
         this.node.position.x * this.nodeOptions.scale +
-        "px", // remove: this.options.offsetLeft +
+        "px",
       transform: `scale(${this.nodeOptions.scale})`
     };
   }
-
-  
 
   handleMousedown(e: any) {
     const target = e.target || e.srcElement;
