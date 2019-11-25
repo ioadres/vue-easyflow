@@ -19,7 +19,7 @@ export interface IScene {
     scale: number,
     centerY: number,
     nodes: INode[],
-    lines: ILine[]
+    linesLinks: ILine[]
 }
 
 export class Scene implements IScene {
@@ -27,13 +27,13 @@ export class Scene implements IScene {
     scale: number
     centerY: number
     nodes: INode[]
-    lines: ILine[]
+    linesLinks: ILine[]
 
     constructor() {
         this.centerX = 0;
         this.centerY = 0;
         this.nodes = [];
-        this.lines = [];
+        this.linesLinks = [];
         this.scale = 0;
     }
 }

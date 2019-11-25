@@ -1,7 +1,10 @@
 <template>
   <div class="app">
     <h1>simple flowchart</h1>
-    <div class="tool-wrapper"></div>
+    <div class="tool-wrapper">
+      <button @click="addNode">Add</button>
+      <button @click="exportData">Exportar</button>
+    </div>
 
     <work-flow-path
       :workflow.sync="workflow"
@@ -20,47 +23,20 @@ import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
 import { IWorkFlow } from "./shared/workflow/workflow.type";
 import { ILink } from "./shared/workflow/line.type";
 import { Node } from "./shared/workflow/node.type";
+import { Position } from './shared/workflow/position.type';
 @Component({
   components: { WorkFlowPath }
 })
 export default class extends Vue {
   public name = "App";
-  
+
   public workflow: IWorkFlow = {
     scene: {
-      lines: [],
+      linesLinks: [],
+      nodes: [],
       centerX: 1024,
       centerY: 140,
-      scale: 1,
-      nodes: [
-        Node.fromData({
-          id: 2,
-          position: {
-            x: -357,
-            y: 80
-          },
-          type: "Action",
-          label: "test1"
-        }),
-        Node.fromData({
-          position: {
-            x: -700,
-            y: -69
-          },
-          id: 4,
-          type: "Script",
-          label: "test2"
-        }),
-        Node.fromData({
-          id: 6,
-          position: {
-            x: -557,
-            y: 80
-          },
-          type: "Rule",
-          label: "test3"
-        })
-      ]
+      scale: 1
     },
     height: 800
   };
@@ -68,15 +44,31 @@ export default class extends Vue {
   canvasClick(e: any) {
     console.log("canvas Click, event:", e);
   }
+
+  exportData() {
+    console.log(this.workflow.scene.nodes);
+
+    let exportData = {
+      nodes: this.workflow.scene.nodes,
+      links: this.workflow.scene.linesLinks
+    };
+
+    this.$emit("exportData", exportData);
+  }
+
   addNode() {
     let maxID = Math.max(
       0,
-      ...this.workflow.scene.nodes.map(link => {
-        return link.id;
+      ...this.workflow.scene.nodes.map(node => {
+        return node.id;
       })
     );
-    this.workflow.scene.nodes.push(new Node());
+    let node = new Node(maxID+1);
+    node.label = "class " + node.id
+    node.type = "Default"
+    this.workflow.scene.nodes.push(node)
   }
+
   nodeClick(id: number) {
     console.log("node click", id);
   }

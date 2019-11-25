@@ -34,11 +34,6 @@ export default class extends Vue {
 
   constructor() {
     super();
-    this.nodeViewScale.centerX = 1024;
-    this.nodeViewScale.scale = 1;
-    this.nodeViewScale.centerY = 140;
-    this.node.label = "Input name";
-    this.node.type = "Defailt";
   }
 
   get nodeStyle() {

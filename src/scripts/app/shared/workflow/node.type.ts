@@ -21,8 +21,8 @@ export class Node implements INode {
     type: string;
     label: string;
 
-    constructor() {
-        this.id = 0;
+    constructor(id : number | null) {
+        this.id = id!;
         this.position = {
             x : 0,
             y:0

@@ -39,18 +39,17 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import {
   IWorkFlow,
   NodeAction,
-  Mouse,
-  LinkAction
+  LinkAction,
+  Mouse
 } from "./../../shared/workflow/workflow.type";
 import { INodeViewScale, INode } from "./../../shared/workflow/node.type";
 import { Line, ILine } from "./../../shared/workflow/line.type";
 
 @Component({
-  components: { LineLink, Card }
+  components: { LineLink, Card },
+  name: "WorkFlowPath"
 })
 export default class extends Vue {
-  public name = "WorkFlowPath";
-
   @Prop() workflow!: IWorkFlow;
 
   private nodeAction: NodeAction = new NodeAction();
@@ -69,7 +68,7 @@ export default class extends Vue {
   }
 
   get lines() {
-    const lines = this.workflow.scene.lines.map(line => {
+    const lines = this.workflow.scene.linesLinks.map(line => {
       const fromNode = this.findNodeWithID(line.from);
       const toNode = this.findNodeWithID(line.to);
       let x = 0,
@@ -145,7 +144,7 @@ export default class extends Vue {
     // add new Link
     if (this.linkAction && this.linkAction.from !== nodeElementeIndex) {
       // check link existence
-      const existed = this.workflow.scene.lines.find(line => {
+      const existed = this.workflow.scene.linesLinks.find(line => {
         return (
           line.from === this.linkAction.from && line.to === nodeElementeIndex
         );
@@ -154,7 +153,7 @@ export default class extends Vue {
       if (!existed) {
         let maxID = Math.max(
           0,
-          ...this.workflow.scene.lines.map(line => {
+          ...this.workflow.scene.linesLinks.map(line => {
             return line.id;
           })
         );
@@ -164,7 +163,7 @@ export default class extends Vue {
         newLink.from = this.linkAction.from;
         newLink.to = nodeElementeIndex;
 
-        this.workflow.scene.lines.push(newLink);
+        this.workflow.scene.linesLinks.push(newLink);
         this.$emit("linkAdded", newLink);
       }
     }
@@ -172,13 +171,15 @@ export default class extends Vue {
   }
 
   linkDelete(id: number) {
-    const deletedLink = this.workflow.scene.lines.find(item => {
+    const deletedLink = this.workflow.scene.linesLinks.find(item => {
       return item.id === id;
     });
     if (deletedLink) {
-      this.workflow.scene.lines = this.workflow.scene.lines.filter(item => {
-        return item.id !== id;
-      });
+      this.workflow.scene.linesLinks = this.workflow.scene.linesLinks.filter(
+        item => {
+          return item.id !== id;
+        }
+      );
       this.$emit("linkDelete", deletedLink);
     }
   }
@@ -196,8 +197,7 @@ export default class extends Vue {
 
   handleMove(e: any) {
     if (this.linkAction.isDragging) {
-      [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-      [this.linkAction.x, this.linkAction.y] = [this.mouse.x, this.mouse.y];
+      this.linkMove(e);
     }
 
     if (this.nodeAction.isDragging) {
@@ -220,9 +220,11 @@ export default class extends Vue {
       this.workflow.scene.nodes = this.workflow.scene.nodes.filter(node => {
         return node.id !== nodeToDelete.id;
       });
-      this.workflow.scene.lines = this.workflow.scene.lines.filter(line => {
-        return line.from !== nodeToDelete.id && line.to !== nodeToDelete.id;
-      });
+      this.workflow.scene.linesLinks = this.workflow.scene.linesLinks.filter(
+        line => {
+          return line.from !== nodeToDelete.id && line.to !== nodeToDelete.id;
+        }
+      );
       this.$emit("nodeDelete", nodeToDelete.id);
     }
   }
@@ -243,6 +245,52 @@ export default class extends Vue {
       this.nodeAction.selected = null;
     }
     this.$emit("canvasClick", e);
+  }
+
+  /*moveTree(id: number, type: string, e: any) {
+    [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
+    let posX, posY;
+    [posX, posY] = [
+      this.mouse.x - this.mouse.lastX,
+      this.mouse.y - this.mouse.lastY
+    ];
+
+    let nodes: INode[] = [];
+    let lines: ILine[] = [];
+
+    let line = this.workflow.scene.linesLinks.filter(line => {
+      return line.id === id;
+    })[0];
+
+    nodes.push(...this.getChildNode(line.to!));
+  }
+
+  getChildNode(id: number) {
+    let nodes: INode[] = [];
+
+    let nodeTemp = this.workflow.scene.nodes.filter(node => {
+      return node.id === id;
+    });
+    if (nodeTemp.length > 0) {
+      nodes.push(nodeTemp[0]);
+
+      let line = this.workflow.scene.linesLinks.filter(line => {
+        return line.to === nodeTemp[0].id;
+      });
+      if (line.length > 0) {
+        nodes.push(...this.getChildNode(line[0].id));
+      }
+    }
+    return nodes;
+  }
+  getParendNode(id: number) {
+
+
+  }*/
+
+  linkMove(e: any) {
+    [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
+    [this.linkAction.x, this.linkAction.y] = [this.mouse.x, this.mouse.y];
   }
 
   nodeMove(e: any) {
