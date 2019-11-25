@@ -1,7 +1,7 @@
 <template>
   <g @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
     <path :d="lineTransform" :style="lineStyle"></path>
-    <a v-if="show.delete" @click="deleteLink">
+    <a v-if="show.delete" @click="linkDelete">
       <text text-anchor="middle" :transform="arrowTransform" font-size="22">&times;</text>
     </a>
     <path v-else d="M -1 -1 L 0 1 L 1 -1 z" :style="arrowStyle" :transform="arrowTransform"></path>
@@ -10,10 +10,12 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { ILine } from "./type";
+import { ILine } from "./../../../shared/workflow/line.type";
 
-@Component({ name: "LineLink" })
-export default class LineLink extends Vue {
+@Component
+export default class extends Vue {
+  public Name = 'LineLink'
+
   @Prop() line!: ILine;
   show: any = {
     delete: false
@@ -78,8 +80,8 @@ export default class LineLink extends Vue {
     return degree < 0 ? degree + 360 : degree;
   }
 
-  deleteLink() {
-    this.$emit("deleteLink");
+  linkDelete() {
+    this.$emit("linkDelete");
   }
 }
 </script>

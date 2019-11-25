@@ -17,25 +17,23 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
-import { IWorkFlow } from "./components/workflow/type";
-import { ILink } from "./components/workflow/line-link/type";
-import { Node } from "./components/workflow/card/type";
+import { IWorkFlow } from "./shared/workflow/workflow.type";
+import { ILink } from "./shared/workflow/line.type";
+import { Node } from "./shared/workflow/node.type";
 @Component({
   components: { WorkFlowPath }
 })
-
 export default class extends Vue {
   public name = "App";
-  workflow: IWorkFlow = {
+  
+  public workflow: IWorkFlow = {
     scene: {
-      lines: [
-      ],
+      lines: [],
       centerX: 1024,
       centerY: 140,
       scale: 1,
       nodes: [
-        Node.fromData(
-        {
+        Node.fromData({
           id: 2,
           position: {
             x: -357,
@@ -64,7 +62,7 @@ export default class extends Vue {
         })
       ]
     },
-    height: 800,
+    height: 800
   };
 
   canvasClick(e: any) {
@@ -96,7 +94,7 @@ export default class extends Vue {
 
 <style lang="scss">
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

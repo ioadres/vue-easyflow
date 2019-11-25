@@ -5,7 +5,7 @@
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave"
-    v-bind:class="{selected: nodeOptions.selected === node.id}"
+    v-bind:class="{selected: nodeViewScale.selected === node.id}"
   >
     <div class="node-port node-input" @mousedown="inputMouseDown" @mouseup="inputMouseUp"></div>
     <div class="node-main">
@@ -13,19 +13,20 @@
       <div v-text="node.label" class="node-label"></div>
     </div>
     <div class="node-port node-output" @mousedown="outputMouseDown"></div>
-    <div v-show="show.delete" class="node-delete">&times;</div>
+    <div v-show="show.delete" class="node-delete" @mouseup="deleteHandleUp">&times;</div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { INode } from "./type";
-import { IOption } from "./../../workflow/type";
+import { INode, INodeViewScale } from "./../../../shared/workflow/node.type";
 
-@Component({ name: "Card" })
-export default class Card extends Vue {
+@Component
+export default class extends Vue {
+  public name = "Card";
+
   @Prop() node!: INode;
-  @Prop() nodeOptions!: IOption;
+  @Prop() nodeViewScale!: INodeViewScale;
 
   public show: any = {
     delete: false
@@ -33,9 +34,9 @@ export default class Card extends Vue {
 
   constructor() {
     super();
-    this.nodeOptions.centerX = 1024;
-    this.nodeOptions.scale = 1;
-    this.nodeOptions.centerY = 140;
+    this.nodeViewScale.centerX = 1024;
+    this.nodeViewScale.scale = 1;
+    this.nodeViewScale.centerY = 140;
     this.node.label = "Input name";
     this.node.type = "Defailt";
   }
@@ -43,20 +44,23 @@ export default class Card extends Vue {
   get nodeStyle() {
     return {
       top:
-        this.nodeOptions.centerY +
-        this.node.position.y * this.nodeOptions.scale +
+        this.nodeViewScale.centerY +
+        this.node.position.y * this.nodeViewScale.scale +
         "px",
       left:
-        this.nodeOptions.centerX +
-        this.node.position.x * this.nodeOptions.scale +
+        this.nodeViewScale.centerX +
+        this.node.position.x * this.nodeViewScale.scale +
         "px",
-      transform: `scale(${this.nodeOptions.scale})`
+      transform: `scale(${this.nodeViewScale.scale})`
     };
+  }
+
+  deleteHandleUp(e: any) {
+    this.$emit("handleNodeEntrydelete", this.node, e);
   }
 
   handleMousedown(e: any) {
     const target = e.target || e.srcElement;
-    // console.log(target);
     if (
       target.className.indexOf("node-input") < 0 &&
       target.className.indexOf("node-output") < 0

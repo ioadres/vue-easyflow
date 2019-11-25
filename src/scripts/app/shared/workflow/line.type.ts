@@ -1,10 +1,11 @@
-import {IPosition, Position} from '../../core/type';
+import {IPosition} from './position.type'
 
 export interface ILine {
     id: number
     from: number | null,
     to: number | null,
-    link: ILink
+    link: ILink,    
+    type: string;
 }
 
 export interface ILink {
@@ -16,7 +17,8 @@ export class Line implements ILine{
     id!: number;
     from!: number;
     to!: number;
-    link!: ILink;
+    link!: ILink;    
+    type!: string;
 
     constructor() {
         this.id = 0;
@@ -28,15 +30,20 @@ export class Line implements ILine{
     }
 }
 
-
 export class Link implements ILink {
 
     start!: IPosition ;
     end!: IPosition;
 
     constructor() {
-        this.start = new Position();
-        this.end = new Position();
+        this.start = {
+            x : 0,
+            y:0
+        };
+        this.end = {
+            x : 0,
+            y:0
+        };
     }
 
     static fromData(data: Link) {

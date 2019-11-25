@@ -1,5 +1,5 @@
-import { INode } from './card/type'
-import { ILine } from './line-link/type'
+import {INode} from './node.type'
+import {ILine} from './line.type'
 
 export class WorkFlow implements IWorkFlow {
     scene!: Scene;
@@ -12,6 +12,14 @@ export class WorkFlow implements IWorkFlow {
 export interface IWorkFlow {
     scene: IScene,
     height: number
+}
+
+export interface IScene {
+    centerX: number,
+    scale: number,
+    centerY: number,
+    nodes: INode[],
+    lines: ILine[]
 }
 
 export class Scene implements IScene {
@@ -30,24 +38,22 @@ export class Scene implements IScene {
     }
 }
 
-export interface IScene {
-    centerX: number,
-    scale: number,
-    centerY: number,
-    nodes: INode[],
-    lines: ILine[]
+export class LinkAction {
+    isDragging: boolean = false;
+    from: number = 0;
+    x: number = 0;
+    y: number=0;
 }
 
-export class Action {
-    linking: boolean = false;
-    dragging: number | null = null;
-    scrolling: boolean = false;
+export class NodeAction {
+    isDragging: boolean = false;
+    isScrolling: boolean = false;
     selected: number | null = null;
 }
 
 export class Mouse {
     x: number = 0;
-    y: number =0;
+    y: number = 0;
     lastX: number = 0;
     lastY: number = 0;
 }
@@ -55,20 +61,4 @@ export class Mouse {
 export class RootDivOffset {
     top: number = 0;
     left: number = 0;
-}
-
-
-export class Option implements IOption {
-    centerX = 0
-    scale = 0
-    centerY = 0
-    selected = 0
-}
-
-
-export interface IOption {
-    centerX: number,
-    scale: number,
-    centerY: number,
-    selected: number | null,
 }
