@@ -22,7 +22,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
 import { IWorkFlow } from "./shared/workflow/workflow.type";
 import { ILink } from "./shared/workflow/line.type";
-import { Node } from "./shared/workflow/node.type";
+import { Node, INode, Card, Diamon } from "./shared/workflow/node.type";
 import { Position } from './shared/workflow/position.type';
 @Component({
   components: { WorkFlowPath }
@@ -36,7 +36,7 @@ export default class extends Vue {
       nodes: [],
       centerX: 1024,
       centerY: 140,
-      scale: 1
+      scale: 2
     },
     height: 800
   };
@@ -63,9 +63,17 @@ export default class extends Vue {
         return node.id;
       })
     );
-    let node = new Node(maxID+1);
-    node.label = "class " + node.id
-    node.type = "default"
+
+    let node:INode;
+    var ramdom = Math.floor(Math.random() * 2);
+    if(ramdom == 0)  {
+    node= new Card(maxID+1);
+    node.type = "card"
+    } else {
+      node= new Diamon(maxID+1);
+      node.type = "desicion"
+    }
+    node.label = "Pregunta a usuario si el nombre es correcto." + node.id
     this.workflow.scene.nodes.push(node)
   }
 

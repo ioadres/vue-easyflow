@@ -48,7 +48,11 @@ export default class extends Vue {
         this.nodeViewScale.centerX +
         this.node.position.x * this.nodeViewScale.scale +
         "px",
-      transform: `scale(${this.nodeViewScale.scale})`
+      transform: `scale(${this.nodeViewScale.scale})`,
+      width: this.node.width * this.nodeViewScale.scale +
+        "px",
+      'min-height' :this.node.height* this.nodeViewScale.scale +
+        "px"
     };
   }
 
@@ -76,7 +80,7 @@ export default class extends Vue {
   }
 
   outputMouseDown(e: any) {
-    this.$emit("linkingStart", this.node);
+    this.$emit("linkingStart", this.node, "bottom");
     e.preventDefault();
   }
 
@@ -85,7 +89,7 @@ export default class extends Vue {
   }
 
   inputMouseUp(e: any) {
-    this.$emit("linkingStop",this.node);
+    this.$emit("linkingStop",this.node, "top");
     e.preventDefault();
   }
 }
@@ -97,8 +101,6 @@ $themeColor: rgb(0, 153, 255);
 $portSize: 12;
 .flowchart-node {
   margin: 0;
-  width: 300px;
-  min-height: 100px;
   position: absolute;
   box-sizing: border-box;  
   border: 1px solid #e4e6eb;

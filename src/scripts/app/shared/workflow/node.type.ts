@@ -1,10 +1,16 @@
-import {IPosition} from './position.type'
+import { IPosition, Position } from './position.type'
 
 export interface INode {
     id: number,
     position: IPosition,
     type: string,
-    label: string
+    label: string,
+    width:number,
+    height:number,
+    leftPort:IPosition;
+    rightPort:IPosition;
+
+    getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number];
 }
 
 export interface INodeViewScale {
@@ -17,21 +23,92 @@ export interface INodeViewScale {
 
 export class Node implements INode {
     id: number;
-    position: IPosition ;
+    position: IPosition;
     type: string;
-    label: string;
+    label: string;    
+    width:number;
+    height:number;
+    leftPort:IPosition;
+    rightPort:IPosition;
 
-    constructor(id : number | null) {
+    constructor(id: number | null) {
         this.id = id!;
         this.position = {
-            x : 0,
-            y:0
+            x: 0,
+            y: 0
         };
         this.type = '';
-        this.label ='';
+        this.label = '';
+        this.width = 0;
+        this.height = 0;
+        this.leftPort = new Position();
+        this.rightPort =  new Position();
+    }
+
+    public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
+        return [0, 0];
     }
 
     static fromData(data: INode) {
         return data;
+    }
+}
+
+
+export class Diamon extends Node implements INode {
+
+    constructor(id: number | null) {
+        super(id);        
+        this.width = 150;
+        this.height = 150;
+
+        var leftProportional = this.width * 40 / 200;
+        var rightProportional = this.width * 40 / 200;
+
+        this.leftPort.x = -leftProportional;        
+        this.leftPort.y = this.height/2 - 10;
+        this.rightPort.x = this.width + rightProportional;        
+        this.rightPort.y = this.height/2 - 10;
+
+  
+    }
+
+    public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
+        let x = centerX + this.position.x;
+        let y = centerY + this.position.y;
+        var leftProportional = this.width * 40 / 200;
+        var rightProportional = this.width * 40 / 200;
+
+        if (typePort === "top") {
+            return [x + (this.width * scale)/2, y];
+        }        
+        if (typePort === "left") {
+            return [x - leftProportional * scale, y + (this.height* scale) / 2];
+        }
+        if (typePort === "right") {
+            return [x + this.width + rightProportional, y + this.height/2];
+        }
+        return [0, 0];
+    }
+}
+
+export class Card extends Node implements INode {
+
+    constructor(id: number | null) {
+        super(id);        
+        this.width = 300;
+        this.height = 100;
+    }
+
+    public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
+        let x = centerX + this.position.x;
+        let y = centerY + this.position.y;
+        if (typePort === "top") {
+            return [x + this.width/2, y];
+        }
+        if (typePort === "bottom") {
+            return [x + this.width/2, y + this.height];
+        }
+        return [0, 0];
     }
 }

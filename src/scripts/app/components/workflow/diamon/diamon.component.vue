@@ -8,14 +8,18 @@
     v-bind:class="{selected: nodeViewScale.selected === node.id}"
   >
     <div class="node-port node-input" @mousedown="inputMouseDown" @mouseup="inputMouseUp"></div>
-    <div class="node-main">
-      <div v-text="node.type" class="node-type"></div>
-      <div clas="node-custom">
-      <div v-text="node.label" class="node-label"></div>
+    <div class="node-main" :style="nodeWidhtAndHeightStyle" >
+      
+      <div class="node-custom" >
+        <div v-text="node.label" class="node-label"></div>
       </div>
     </div>
-    <div class="node-port node-output node-output-left" @mousedown="outputMouseDownLeft"></div>
-    <div class="node-port node-output node-output-right" @mousedown="outputMouseDownRight"></div>
+    <div class="node-port node-output" :style="nodeLeftPortStyle" @mousedown="outputMouseDownLeft"></div>
+    <div
+      class="node-port node-output"
+      :style="nodeRightPortStyle"
+      @mousedown="outputMouseDownRight"
+    ></div>
     <div v-show="show.delete" class="node-delete" @mouseup="deleteHandleUp">&times;</div>
   </div>
 </template>
@@ -39,6 +43,13 @@ export default class extends Vue {
     super();
   }
 
+  get nodeWidhtAndHeightStyle() {
+    return {      
+      width: this.node.width + "px !important",
+      "height": this.node.height + "px!important"
+    };
+  }
+
   get nodeStyle() {
     return {
       top:
@@ -49,7 +60,23 @@ export default class extends Vue {
         this.nodeViewScale.centerX +
         this.node.position.x * this.nodeViewScale.scale +
         "px",
-      transform: `scale(${this.nodeViewScale.scale})`
+      width: this.node.width + "px !important",
+      "min-height": this.node.height + "px!important",
+      transform: `scale(${this.nodeViewScale.scale})`,
+    };
+  }
+
+  get nodeRightPortStyle() {
+    return {
+      top: this.node.rightPort.y  + "px",
+      left: this.node.rightPort.x + "px",
+    };
+  }
+
+  get nodeLeftPortStyle() {
+    return {
+      top: this.node.leftPort.y + "px",
+      left: this.node.leftPort.x + "px",
     };
   }
 
@@ -77,12 +104,12 @@ export default class extends Vue {
   }
 
   outputMouseDownLeft(e: any) {
-    this.$emit("linkingStart",this.node, "left");
+    this.$emit("linkingStart", this.node, "left");
     e.preventDefault();
   }
 
   outputMouseDownRight(e: any) {
-    this.$emit("linkingStart",this.node, "right");
+    this.$emit("linkingStart", this.node, "right");
     e.preventDefault();
   }
 
@@ -91,7 +118,7 @@ export default class extends Vue {
   }
 
   inputMouseUp(e: any) {
-    this.$emit("linkingStop");
+    this.$emit("linkingStop", this.node, "top");
     e.preventDefault();
   }
 }
@@ -100,56 +127,75 @@ export default class extends Vue {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 $themeColor: rgb(0, 153, 255);
-$portSize: 12;
+$portSize: 17;
 
 .diamond {
   position: absolute;
-  height: 200px;
-  width: 200px;
   text-align: center;
-  margin: 10px 40px;
+  z-index: 0;
 }
 .diamond:before {
   position: absolute;
-  content: '';
+  content: "";
   top: 0px;
   left: 0px;
   height: 100%;
   width: 100%;
   transform: rotateX(45deg) rotateZ(45deg);
-  box-shadow: 0px 0px 12px gray;
+  background-color: #e4e4e4;
+  border: 1px solid #e4e6eb;
+  opacity: 0.9;
+  z-index: -20;
 }
 .diamond:after {
   position: absolute;
   top: 10px;
   left: 10px;
-  content: '';
-  height: calc(100% - 22px);  /* -22px is 2 * 10px gap on either side - 2px border on either side */
-  width: calc(100% - 22px);  /* -22px is 2 * 10px gap on either side - 2px border on either side */
+  content: "";
+  height: calc(100% - 22px);
+  width: calc(100% - 22px);
   transform: rotateX(45deg) rotateZ(45deg);
+  z-index: -20;
 }
 
 .diamond {
-  
   color: rgba(0, 0, 0, 1);
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
-  z-index: 1;
-  opacity: 0.9;
+
   cursor: move;
   transform-origin: top left;
-  
+
   .node-main {
     text-align: center;
+
     
-    .node-type {       
-      padding: 6px 12px;      
-    }
     .node-custom {
-      padding: 6px 12px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      top: 45%;
+      transform: translateY(-50%);
+
+      .node-type {
+      background: $themeColor;
+      color: white;
+      padding: 5px 5px;
+      border-top-right-radius: 1.3em;
+    }
       .node-label {
         font-size: 13px;
       }
     }
+  }
+
+  .node-main:after {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    content: "";
+    height: calc(100% - 22px);
+    width: calc(100% - 22px);
+    z-index: 0;
   }
   .node-port {
     position: absolute;
@@ -168,16 +214,8 @@ $portSize: 12;
   .node-input {
     top: #{-2 + $portSize/-2}px;
   }
-  .node-output-left {
+  .node-output {
     position: absolute;
-    left: -40px;
-    top: 91px;
-  }
-
-  .node-output-right {    
-    position: absolute;
-    top: 91px;
-    left: 241px;
   }
 
   .node-delete {
@@ -200,8 +238,8 @@ $portSize: 12;
   }
 }
 .selected:before {
-   position: absolute;
-  content: '';
+  position: absolute;
+  content: "";
   top: 0px;
   left: 0px;
   height: 100%;

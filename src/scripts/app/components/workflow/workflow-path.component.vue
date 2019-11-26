@@ -19,8 +19,8 @@
 
     <card
       :node.sync="node"
-      v-for="(node, index) in getNodesByType('default')"
-      :key="`node${index}`"
+      v-for="(node, index) in getNodesByType('card')"
+      :key="`card${index}`"
       :nodeViewScale="getNodeViewScale"
       @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
       @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
@@ -32,12 +32,12 @@
     <diamond
       :node.sync="node"
       v-for="(node, index) in getNodesByType('desicion')"
-      :key="`node${index}`"
+      :key="`desicion${index}`"
       :nodeViewScale="getNodeViewScale"
       @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
       @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
       @linkingStart="linkingNodeStart"
-      @linkingStop="linkingNodeStop(node)"
+      @linkingStop="linkingNodeStop"
       @nodeSelected="nodeSelected(node.id, $event)"
     ></diamond>
   </div>
@@ -97,19 +97,19 @@ export default class extends Vue {
         ex = 0,
         ey = 0;
 
-      x = this.workflow.scene.centerX + fromNode!.position.x;
-      y = this.workflow.scene.centerY + fromNode!.position.y;
-      [cx, cy] = this.getPortPosition("bottom", x, y);
+      [cx, cy] = fromNode!.getPositionNodePort(
+        this.workflow.scene.centerX,
+        this.workflow.scene.centerY,
+        line.fromTypePort!,
+        this.workflow.scene.scale
+      );
 
-      x = this.workflow.scene.centerX + toNode!.position.x;
-      y = this.workflow.scene.centerY + toNode!.position.y;
-      [ex, ey] = this.getPortPosition("top", x, y);
-
-      if (fromNode!.type === "desicion") {
-        x = this.workflow.scene.centerX + fromNode!.position.x;
-        y = this.workflow.scene.centerY + fromNode!.position.y;
-        [cx, cy] = this.getPortPosition(line.fromPort!, x, y);
-      }
+      [ex, ey] = toNode!.getPositionNodePort(
+        this.workflow.scene.centerX,
+        this.workflow.scene.centerY,
+        "top",
+        this.workflow.scene.scale
+      );
 
       line.link.start.x = cx;
       line.link.start.y = cy;
@@ -128,8 +128,12 @@ export default class extends Vue {
 
       x = this.workflow.scene.centerX + fromNode!.position.x;
       y = this.workflow.scene.centerY + fromNode!.position.y;
-      [cx, cy] = this.getPortPosition("bottom", x, y);
-
+      [cx, cy] = fromNode!.getPositionNodePort(
+        this.workflow.scene.centerX,
+        this.workflow.scene.centerY,
+        this.linkAction.port,
+        this.workflow.scene.scale
+      );
       let currentLink = new Line();
       currentLink.link.start.x = cx;
       currentLink.link.start.y = cy;
@@ -147,23 +151,7 @@ export default class extends Vue {
     });
   }
 
-  getPortPosition(type: string, x: number, y: number) {
-    if (type === "top") {
-      return [x + 150, y];
-    } 
-    if (type === "bottom") {
-      return [x + 150, y + 100];
-    }
-    if (type === "left") {
-      return [x , y + 105];
-    }
-    if (type === "right") {
-      return [x + 280, y + 105];
-    }
-    return [0, 0];
-  }
-
-  linkingNodeStart(node: INode, port : string) {
+  linkingNodeStart(node: INode, port: string) {
     this.linkAction = {
       from: node.id,
       port: port,
@@ -173,14 +161,12 @@ export default class extends Vue {
     };
   }
 
-  linkingNodeStop(node: INode, port : string) {
+  linkingNodeStop(node: INode, port: string) {
     // add new Link
     if (this.linkAction && this.linkAction.from !== node.id) {
       // check link existence
       const existed = this.workflow.scene.linesLinks.find(line => {
-        return (
-          line.from === this.linkAction.from && line.to === node.id
-        );
+        return line.from === this.linkAction.from && line.to === node.id;
       });
 
       if (!existed) {
@@ -194,7 +180,7 @@ export default class extends Vue {
         let newLink: ILine = new Line();
         newLink.id = maxID + 1;
         newLink.from = this.linkAction.from;
-        newLink.fromPort = this.linkAction.port;
+        newLink.fromTypePort = this.linkAction.port;
         newLink.to = node.id;
 
         this.workflow.scene.linesLinks.push(newLink);
