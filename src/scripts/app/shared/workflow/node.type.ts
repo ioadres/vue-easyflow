@@ -83,10 +83,10 @@ export class Diamon extends Node implements INode {
             return [x + (this.width * scale)/2, y];
         }        
         if (typePort === "left") {
-            return [x - leftProportional * scale, y + (this.height* scale) / 2];
+            return [x - leftProportional, y + (this.height* scale) / 2];
         }
         if (typePort === "right") {
-            return [x + this.width + rightProportional, y + this.height/2];
+            return [x + this.width*scale + rightProportional, y + this.height* scale/2];
         }
         return [0, 0];
     }
