@@ -49,9 +49,9 @@ export default class extends Vue {
         this.node.position.x * this.nodeViewScale.scale +
         "px",
       transform: `scale(${this.nodeViewScale.scale})`,
-      width: this.node.width * this.nodeViewScale.scale +
+      width: this.node.width +
         "px",
-      'min-height' :this.node.height* this.nodeViewScale.scale +
+      'min-height' :this.node.height +
         "px"
     };
   }

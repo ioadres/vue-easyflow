@@ -59,8 +59,8 @@ export class Diamon extends Node implements INode {
 
     constructor(id: number | null) {
         super(id);        
-        this.width = 150;
-        this.height = 150;
+        this.width = 100;
+        this.height = 100;
 
         var leftProportional = this.width * 40 / 200;
         var rightProportional = this.width * 40 / 200;
@@ -74,19 +74,19 @@ export class Diamon extends Node implements INode {
     }
 
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
-        let x = centerX + this.position.x;
-        let y = centerY + this.position.y;
-        var leftProportional = this.width * 40 / 200;
-        var rightProportional = this.width * 40 / 200;
+        let x = centerX + this.position.x * scale;
+        let y = centerY + this.position.y * scale;
+        var leftProportional = (this.width * 40  * scale)/ 200;
+        var rightProportional = (this.width * 40 * scale) / 200;
 
         if (typePort === "top") {
-            return [x + (this.width * scale)/2, y];
+            return [x + (this.width*scale)/2, y];
         }        
         if (typePort === "left") {
-            return [x - leftProportional, y + (this.height* scale) / 2];
+            return [x - leftProportional, y + (this.height * scale) / 2];
         }
         if (typePort === "right") {
-            return [x + this.width*scale + rightProportional, y + this.height* scale/2];
+            return [x + (this.width*scale) + rightProportional, y + this.height*scale/2];
         }
         return [0, 0];
     }
@@ -101,13 +101,14 @@ export class Card extends Node implements INode {
     }
 
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
-        let x = centerX + this.position.x;
-        let y = centerY + this.position.y;
+        let x = centerX + this.position.x * scale;
+        let y = centerY + this.position.y * scale;
+
         if (typePort === "top") {
-            return [x + this.width/2, y];
+            return [x + (this.width*scale)/2, y];
         }
         if (typePort === "bottom") {
-            return [x + this.width/2, y + this.height];
+            return [x + (this.width*scale)/2, y + (this.height * scale)];
         }
         return [0, 0];
     }

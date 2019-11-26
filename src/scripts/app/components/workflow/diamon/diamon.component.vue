@@ -127,7 +127,7 @@ export default class extends Vue {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 $themeColor: rgb(0, 153, 255);
-$portSize: 17;
+$portSize: 14;
 
 .diamond {
   position: absolute;
@@ -167,7 +167,6 @@ $portSize: 17;
 
   .node-main {
     text-align: center;
-
     
     .node-custom {
       margin-left: auto;
@@ -183,7 +182,7 @@ $portSize: 17;
       border-top-right-radius: 1.3em;
     }
       .node-label {
-        font-size: 13px;
+        font-size: 10px;
       }
     }
   }

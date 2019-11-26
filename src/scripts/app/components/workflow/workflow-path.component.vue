@@ -90,9 +90,7 @@ export default class extends Vue {
     const lines = this.workflow.scene.linesLinks.map(line => {
       const fromNode = this.findNodeWithID(line.from);
       const toNode = this.findNodeWithID(line.to);
-      let x = 0,
-        y = 0,
-        cy = 0,
+      let cy = 0,
         cx = 0,
         ex = 0,
         ey = 0;
@@ -120,14 +118,10 @@ export default class extends Vue {
     });
 
     if (this.linkAction.isDragging) {
-      let x = 0,
-        y = 0,
-        cy = 0,
+      let cy = 0,
         cx = 0;
-      const fromNode = this.findNodeWithID(this.linkAction.from);
 
-      x = this.workflow.scene.centerX + fromNode!.position.x;
-      y = this.workflow.scene.centerY + fromNode!.position.y;
+      const fromNode = this.findNodeWithID(this.linkAction.from);
       [cx, cy] = fromNode!.getPositionNodePort(
         this.workflow.scene.centerX,
         this.workflow.scene.centerY,

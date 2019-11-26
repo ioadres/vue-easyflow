@@ -36,7 +36,7 @@ export default class extends Vue {
       nodes: [],
       centerX: 1024,
       centerY: 140,
-      scale: 2
+      scale: 1
     },
     height: 800
   };
