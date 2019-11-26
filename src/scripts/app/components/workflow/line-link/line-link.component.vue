@@ -1,8 +1,8 @@
 <template>
   <g @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
-    <path :d="lineTransform" :style="lineStyle"></path>
+    <path :d="lineTransform" :style="lineStyle"></path>       
     <a v-if="show.delete" @click="linkDelete">
-      <text text-anchor="middle" :transform="arrowTransform" font-size="22">&times;</text>
+      <text text-anchor="middle" :transform="arrowTransform" font-size="32">&times;</text>
     </a>
     <path v-else d="M -1 -1 L 0 1 L 1 -1 z" :style="arrowStyle" :transform="arrowTransform"></path>
   </g>
@@ -23,16 +23,16 @@ export default class extends Vue {
 
   get lineStyle() {
     return {
-      stroke: "rgb(10, 136, 85)",
-      strokeWidth: 2.73205,
+      stroke: "rgb(112, 119, 122)",
+      strokeWidth: 3.73205,
       fill: "none"
     };
   }
 
   get arrowStyle() {
     return {
-      stroke: "rgb(255, 136, 85)",
-      strokeWidth: 5.73205,
+      stroke: "rgb(0, 153, 255)",
+      strokeWidth: 8.73205,
       fill: "none"
     };
   }
@@ -82,6 +82,11 @@ export default class extends Vue {
 
   linkDelete() {
     this.$emit("linkDelete");
+  }
+
+  moveTree(e: any) {
+    this.$emit("moveTree", e);
+    e.preventDefault();
   }
 }
 </script>

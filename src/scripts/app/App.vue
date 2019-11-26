@@ -65,7 +65,7 @@ export default class extends Vue {
     );
     let node = new Node(maxID+1);
     node.label = "class " + node.id
-    node.type = "Default"
+    node.type = "default"
     this.workflow.scene.nodes.push(node)
   }
 

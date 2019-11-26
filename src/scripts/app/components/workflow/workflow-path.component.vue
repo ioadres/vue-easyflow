@@ -12,27 +12,41 @@
         :line="line"
         v-for="(line, index) in lines"
         :key="`line${index}`"
+        @moveTree="moveTree(line.id, $event)"
         @linkDelete="linkDelete(line.id)"
       />
     </svg>
 
     <card
       :node.sync="node"
-      v-for="(node, index) in workflow.scene.nodes"
+      v-for="(node, index) in getNodesByType('default')"
       :key="`node${index}`"
       :nodeViewScale="getNodeViewScale"
       @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
       @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
-      @linkingStart="linkingNodeStart(node.id)"
-      @linkingStop="linkingNodeStop(node.id)"
+      @linkingStart="linkingNodeStart"
+      @linkingStop="linkingNodeStop"
       @nodeSelected="nodeSelected(node.id, $event)"
     ></card>
+
+    <diamond
+      :node.sync="node"
+      v-for="(node, index) in getNodesByType('desicion')"
+      :key="`node${index}`"
+      :nodeViewScale="getNodeViewScale"
+      @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+      @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+      @linkingStart="linkingNodeStart"
+      @linkingStop="linkingNodeStop(node)"
+      @nodeSelected="nodeSelected(node.id, $event)"
+    ></diamond>
   </div>
 </template>
 
 <script lang="ts">
 import LineLink from "./line-link/line-link.component.vue";
 import Card from "./card/card.component.vue";
+import Diamond from "./diamon/diamon.component.vue";
 
 import { getMousePosition } from "../core/position";
 import { Component, Vue, Prop } from "vue-property-decorator";
@@ -46,7 +60,7 @@ import { INodeViewScale, INode } from "./../../shared/workflow/node.type";
 import { Line, ILine } from "./../../shared/workflow/line.type";
 
 @Component({
-  components: { LineLink, Card },
+  components: { LineLink, Card, Diamond },
   name: "WorkFlowPath"
 })
 export default class extends Vue {
@@ -67,6 +81,11 @@ export default class extends Vue {
     return nodeViewScale;
   }
 
+  getNodesByType(type: string) {
+    const nodes = this.workflow.scene.nodes.filter(x => x.type === type);
+    return nodes;
+  }
+
   get lines() {
     const lines = this.workflow.scene.linesLinks.map(line => {
       const fromNode = this.findNodeWithID(line.from);
@@ -85,6 +104,12 @@ export default class extends Vue {
       x = this.workflow.scene.centerX + toNode!.position.x;
       y = this.workflow.scene.centerY + toNode!.position.y;
       [ex, ey] = this.getPortPosition("top", x, y);
+
+      if (fromNode!.type === "desicion") {
+        x = this.workflow.scene.centerX + fromNode!.position.x;
+        y = this.workflow.scene.centerY + fromNode!.position.y;
+        [cx, cy] = this.getPortPosition(line.fromPort!, x, y);
+      }
 
       line.link.start.x = cx;
       line.link.start.y = cy;
@@ -124,29 +149,37 @@ export default class extends Vue {
 
   getPortPosition(type: string, x: number, y: number) {
     if (type === "top") {
-      return [x + 40, y];
-    } else if (type === "bottom") {
-      return [x + 40, y + 80];
+      return [x + 150, y];
+    } 
+    if (type === "bottom") {
+      return [x + 150, y + 100];
+    }
+    if (type === "left") {
+      return [x , y + 105];
+    }
+    if (type === "right") {
+      return [x + 280, y + 105];
     }
     return [0, 0];
   }
 
-  linkingNodeStart(index: number) {
+  linkingNodeStart(node: INode, port : string) {
     this.linkAction = {
-      from: index,
+      from: node.id,
+      port: port,
       x: 0,
       y: 0,
       isDragging: true
     };
   }
 
-  linkingNodeStop(nodeElementeIndex: number) {
+  linkingNodeStop(node: INode, port : string) {
     // add new Link
-    if (this.linkAction && this.linkAction.from !== nodeElementeIndex) {
+    if (this.linkAction && this.linkAction.from !== node.id) {
       // check link existence
       const existed = this.workflow.scene.linesLinks.find(line => {
         return (
-          line.from === this.linkAction.from && line.to === nodeElementeIndex
+          line.from === this.linkAction.from && line.to === node.id
         );
       });
 
@@ -161,7 +194,8 @@ export default class extends Vue {
         let newLink: ILine = new Line();
         newLink.id = maxID + 1;
         newLink.from = this.linkAction.from;
-        newLink.to = nodeElementeIndex;
+        newLink.fromPort = this.linkAction.port;
+        newLink.to = node.id;
 
         this.workflow.scene.linesLinks.push(newLink);
         this.$emit("linkAdded", newLink);
@@ -247,46 +281,35 @@ export default class extends Vue {
     this.$emit("canvasClick", e);
   }
 
-  /*moveTree(id: number, type: string, e: any) {
+  moveTree(id: number, e: any) {
     [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-    let posX, posY;
+    let posX: number, posY: number;
     [posX, posY] = [
       this.mouse.x - this.mouse.lastX,
       this.mouse.y - this.mouse.lastY
     ];
 
-    let nodes: INode[] = [];
     let lines: ILine[] = [];
 
     let line = this.workflow.scene.linesLinks.filter(line => {
       return line.id === id;
     })[0];
 
-    nodes.push(...this.getChildNode(line.to!));
-  }
-
-  getChildNode(id: number) {
-    let nodes: INode[] = [];
-
-    let nodeTemp = this.workflow.scene.nodes.filter(node => {
-      return node.id === id;
+    /* nodes.forEach(x=>{
+      x.position.x = x.position.x + posX;
+      x.position.y = x.position.y + posY;
     });
-    if (nodeTemp.length > 0) {
-      nodes.push(nodeTemp[0]);
 
-      let line = this.workflow.scene.linesLinks.filter(line => {
-        return line.to === nodeTemp[0].id;
+    let nodesupdate = this.workflow.scene.nodes.forEach(node => {
+      let nodeTemp = nodes.filter(nodeExist => {
+        return nodeExist.id === node.id;
       });
-      if (line.length > 0) {
-        nodes.push(...this.getChildNode(line[0].id));
+
+      if(nodeTemp.length >0) {
+        node.position = nodeTemp[0].position;
       }
-    }
-    return nodes;
+    });*/
   }
-  getParendNode(id: number) {
-
-
-  }*/
 
   linkMove(e: any) {
     [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
@@ -324,7 +347,8 @@ export default class extends Vue {
 <style scoped lang="scss">
 .flowchart-container {
   margin: 0;
-  background: #ddd;
+  border: 1px solid #eee;
+  background: #fcfcfc;
   position: relative;
   overflow: hidden;
   svg {
