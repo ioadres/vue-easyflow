@@ -7,8 +7,8 @@
     @mouseup="handleUp"
     @mousedown="handleDown"
   >
-  <button v-shortkey="['ctrl', 'alt', 'f']" @shortkey="sumScale()" style="display:none"></button>
-  <button v-shortkey="['ctrl', 'alt','g']" @shortkey="restScale()" style="display:none"></button>
+    <button v-shortkey="['ctrl', 'alt', 'f']" @shortkey="sumScale()" style="display:none"></button>
+    <button v-shortkey="['ctrl', 'alt','g']" @shortkey="restScale()" style="display:none"></button>
     <svg width="100%" :height="`${workflow.height}vh`">
       <line-link
         :line="line"
@@ -17,6 +17,18 @@
         @linkDelete="linkDelete(line.id)"
       />
     </svg>
+
+    <point-start
+      :node.sync="node"
+      v-for="(node, index) in getNodesByType('point-start')"
+      :key="`point-start-${index}`"
+      :nodeViewScale="getNodeViewScale"
+      @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+      @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+      @linkingStart="linkingNodeStart"
+      @linkingStop="linkingNodeStop"
+      @nodeSelected="nodeSelected(node.id, $event)"
+    ></point-start>
 
     <card
       :node.sync="node"
@@ -61,6 +73,7 @@ import LineLink from "./line-link/line-link.component.vue";
 import Card from "./card/card.component.vue";
 import Diamond from "./diamon/diamon.component.vue";
 import Action from "./action/action.component.vue";
+import PointStart from "./point-start/point-start.component.vue"
 
 import { getMousePosition } from "../core/position";
 import { Component, Vue, Prop } from "vue-property-decorator";
@@ -72,10 +85,10 @@ import {
 } from "./../../shared/workflow/workflow.type";
 import { INodeViewScale, INode } from "./../../shared/workflow/node.type";
 import { Line, ILine } from "./../../shared/workflow/line.type";
-import { LocationPort } from '../../shared/workflow/enum';
+import { LocationPort } from "../../shared/workflow/enum";
 
 @Component({
-  components: { LineLink, Card, Diamond ,Action},
+  components: { LineLink, Card, Diamond, Action, PointStart },
   name: "WorkFlowPath"
 })
 export default class extends Vue {
@@ -159,8 +172,9 @@ export default class extends Vue {
     this.workflow.scene.scale += 0.2;
   }
   restScale() {
-    if(this.workflow.scene.scale > 0.6)
-    this.workflow.scene.scale-= 0.2;
+    if (this.workflow.scene.scale > 0.6) {
+      this.workflow.scene.scale -= 0.2;
+    }
   }
 
   findNodeWithID(id: number | null) {
@@ -181,7 +195,11 @@ export default class extends Vue {
 
   linkingNodeStop(node: INode, port: string) {
     // add new Link
-    if (this.linkAction && this.linkAction.from !== node.id &&  this.linkAction.isDragging === true) {
+    if (
+      this.linkAction &&
+      this.linkAction.from !== node.id &&
+      this.linkAction.isDragging === true
+    ) {
       // check link existence
       const existed = this.workflow.scene.linesLinks.find(line => {
         return line.from === this.linkAction.from && line.to === node.id;
@@ -237,19 +255,11 @@ export default class extends Vue {
     if (this.linkAction.isDragging) {
       this.linkMove(e);
     }
-
     if (this.nodeAction.isDragging) {
       this.nodeMove(e);
     }
-
     if (this.nodeAction.isScrolling) {
-      [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-      let diffX = this.mouse.x - this.mouse.lastX;
-      let diffY = this.mouse.y - this.mouse.lastY;
-      this.mouse.lastX = this.mouse.x;
-      this.mouse.lastY = this.mouse.y;
-      this.workflow.scene.centerX += diffX;
-      this.workflow.scene.centerY += diffY;
+      this.scrollingMove(e);
     }
   }
 
@@ -312,6 +322,16 @@ export default class extends Vue {
 
     this.workflow.scene.nodes[index].position.x = left;
     this.workflow.scene.nodes[index].position.y = top;
+  }
+
+  scrollingMove(e: any) {
+    [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
+    let diffX = this.mouse.x - this.mouse.lastX;
+    let diffY = this.mouse.y - this.mouse.lastY;
+    this.mouse.lastX = this.mouse.x;
+    this.mouse.lastY = this.mouse.y;
+    this.workflow.scene.centerX += diffX;
+    this.workflow.scene.centerY += diffY;
   }
 }
 </script>

@@ -1,36 +1,31 @@
 <template>
   <div
-    class="diamond"
+    class="flowchart-node"
     :style="nodeStyle"
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave"
     v-bind:class="{selected: nodeViewScale.selected === node.id}"
   >
-    <div class="node-port node-input" @mousedown="inputMouseDown" @mouseup="inputMouseUp"></div>
     <div class="node-main" :style="nodeWidhtAndHeightStyle">
       <div class="node-custom">
         <div v-text="node.label" class="node-label"></div>
       </div>
     </div>
-    <div class="node-port node-output" :style="nodeLeftPortStyle" @mousedown="outputMouseDownLeft"></div>
-    <div class="node-port node-output" :style="nodeRightPortStyle" @mousedown="outputMouseDownRight"></div>
+    <div class="node-port node-output" @mousedown="outputMouseDownCenter"></div>
     <div v-show="show.delete" class="node-delete" @mouseup="deleteHandleUp">&times;</div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+import { INode, INodeViewScale } from "./../../../shared/workflow/node.type";
 import { LocationPort } from "../../../shared/workflow/enum";
-import  BaseDiagram from "../shared/base-diagram";
+import BaseDiagram from "../shared/base-diagram";
 
 @Component
 export default class extends BaseDiagram implements Vue {
-  public name = "Diamond";
-
-  constructor() {
-    super();
-  }
+  public name = "PointStart";
 
   get nodeWidhtAndHeightStyle() {
     return {
@@ -44,68 +39,28 @@ export default class extends BaseDiagram implements Vue {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 $themeColor: rgb(0, 153, 255);
-$portSize: 14;
-
-.diamond {
-  position: absolute;
-  text-align: center;
-  z-index: 0;
-}
-.diamond:before {
-  position: absolute;
-  content: "";
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  transform: rotateX(45deg) rotateZ(45deg);
-  background-color: #e4e4e4;
-  border: 1px solid #e4e6eb;
-  opacity: 0.9;
-  z-index: -20;
-}
-.diamond:after {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  content: "";
-  height: calc(100% - 22px);
-  width: calc(100% - 22px);
-  transform: rotateX(45deg) rotateZ(45deg);
-  z-index: -20;
-}
-
-.diamond {
-  color: rgba(0, 0, 0, 1);
+$portSize: 12;
+.flowchart-node {
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
-
+  margin: 0;
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #e4e6eb;
+  border-radius: 100px;
+  background-color: #e4e4e4;
+  color: rgba(0, 0, 0, 1);
+  margin: 1px 0;
+  z-index: 1;
+  opacity: 0.9;
   cursor: move;
   transform-origin: top left;
 
   .node-main {
-    text-align: center;
-
-    .node-custom {
-      margin-left: auto;
-      margin-right: auto;
-      position: relative;
-      top: 45%;
-      transform: translateY(-50%);
-
-      .node-label {
-        font-size: 14px;
-      }
+      text-align: center;
+    .node-label {
+      padding: 40%;
+      font-size: 14px;
     }
-  }
-
-  .node-main:after {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    content: "";
-    height: calc(100% - 22px);
-    width: calc(100% - 22px);
-    z-index: 0;
   }
   .node-port {
     position: absolute;
@@ -121,13 +76,9 @@ $portSize: 14;
       border: 1px solid $themeColor;
     }
   }
-  .node-input {
-    top: #{-2 + $portSize/-2}px;
-  }
   .node-output {
-    position: absolute;
+    bottom: #{-2 + $portSize/-2}px;
   }
-
   .node-delete {
     position: absolute;
     right: -6px;
@@ -148,14 +99,7 @@ $portSize: 14;
     }
   }
 }
-.selected:before {
-  position: absolute;
-  content: "";
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  transform: rotateX(45deg) rotateZ(45deg);
+.selected {
   box-shadow: 0 0 0 2px $themeColor;
 }
 </style>

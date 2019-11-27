@@ -10,6 +10,7 @@ export interface INode {
     height:number,
     leftPort:IPosition;
     rightPort:IPosition;
+    centerPort:IPosition;
 
     getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number];
 }
@@ -31,6 +32,7 @@ export class Node implements INode {
     height:number;
     leftPort:IPosition;
     rightPort:IPosition;
+    centerPort:IPosition;
 
     constructor(id: number | null) {
         this.id = id!;
@@ -44,6 +46,7 @@ export class Node implements INode {
         this.height = 0;
         this.leftPort = new Position();
         this.rightPort =  new Position();
+        this.centerPort =  new Position();
     }
 
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
@@ -109,6 +112,25 @@ export class Card extends Node implements INode {
             return [x + (this.width*scale)/2, y];
         }
         if (typePort === LocationPort.Bottom) {
+            return [x + (this.width*scale)/2, y + (this.height * scale)];
+        }
+        return [0, 0];
+    }
+}
+
+export class PointStart extends Node implements INode {
+
+    constructor(id: number | null) {
+        super(id);        
+        this.width = 100;
+        this.height = 100;
+    }
+
+    public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
+        let x = centerX + this.position.x * scale;
+        let y = centerY + this.position.y * scale;
+
+        if (typePort === LocationPort.Center) {
             return [x + (this.width*scale)/2, y + (this.height * scale)];
         }
         return [0, 0];

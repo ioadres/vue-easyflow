@@ -7,6 +7,7 @@
         <option value="card">Card</option>
         <option value="action">Action</option>
         <option value="desicion">Desicion</option>
+        <option value="point-start">start</option>
       </select>
       <button @click="addNode">Add</button>
       <button @click="exportData">Exportar</button>
@@ -28,7 +29,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
 import { IWorkFlow } from "./shared/workflow/workflow.type";
 import { ILink } from "./shared/workflow/line.type";
-import { Node, INode, Card, Diamon, Action } from "./shared/workflow/node.type";
+import { Node, INode, Card, Diamon, Action, PointStart } from "./shared/workflow/node.type";
 import { Position } from "./shared/workflow/position.type";
 @Component({
   components: { WorkFlowPath }
@@ -80,6 +81,9 @@ export default class extends Vue {
     }
     if (this.type === "action") {
       node = new Action(maxID + 1);
+    }
+    if (this.type === "point-start") {
+      node = new PointStart(maxID + 1);
     }
     node.type = this.type;
     node.label = this.label;
