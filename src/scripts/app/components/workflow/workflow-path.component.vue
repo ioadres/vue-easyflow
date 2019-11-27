@@ -151,6 +151,7 @@ export default class extends Vue {
 
       lines.push(currentLink);
     }
+
     return lines;
   }
 
@@ -180,7 +181,7 @@ export default class extends Vue {
 
   linkingNodeStop(node: INode, port: string) {
     // add new Link
-    if (this.linkAction && this.linkAction.from !== node.id) {
+    if (this.linkAction && this.linkAction.from !== node.id &&  this.linkAction.isDragging === true) {
       // check link existence
       const existed = this.workflow.scene.linesLinks.find(line => {
         return line.from === this.linkAction.from && line.to === node.id;
