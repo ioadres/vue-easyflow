@@ -22,8 +22,8 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
 import { IWorkFlow } from "./shared/workflow/workflow.type";
 import { ILink } from "./shared/workflow/line.type";
-import { Node, INode, Card, Diamon } from "./shared/workflow/node.type";
-import { Position } from './shared/workflow/position.type';
+import { Node, INode, Card, Diamon, Action } from "./shared/workflow/node.type";
+import { Position } from "./shared/workflow/position.type";
 @Component({
   components: { WorkFlowPath }
 })
@@ -38,7 +38,7 @@ export default class extends Vue {
       centerY: 140,
       scale: 1
     },
-    height: 800
+    height: 100
   };
 
   canvasClick(e: any) {
@@ -64,17 +64,23 @@ export default class extends Vue {
       })
     );
 
-    let node:INode;
-    var ramdom = Math.floor(Math.random() * 2);
-    if(ramdom == 0)  {
-    node= new Card(maxID+1);
-    node.type = "card"
-    } else {
-      node= new Diamon(maxID+1);
-      node.type = "desicion"
+    let node: INode;
+    var ramdom = Math.floor(Math.random() * 3);
+    node = new Card(maxID + 1);
+    node.type = "card";
+    node.label = "Hola, Bienvenido al chat bot flow diagram";
+    if (ramdom == 1) {
+      node = new Diamon(maxID + 1);
+      node.type = "desicion";
+      node.label = "Tu nombre es Andrés ?";
     }
-    node.label = "Pregunta a usuario si el nombre es correcto." + node.id
-    this.workflow.scene.nodes.push(node)
+    if (ramdom == 2) {
+      node = new Action(maxID + 1);
+      node.type = "action";
+      node.label = "Save name";
+    }
+
+    this.workflow.scene.nodes.push(node);
   }
 
   nodeClick(id: number) {

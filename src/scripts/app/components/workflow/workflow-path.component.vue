@@ -7,12 +7,13 @@
     @mouseup="handleUp"
     @mousedown="handleDown"
   >
-    <svg width="100%" :height="`${workflow.height}px`">
+  <button v-shortkey="['ctrl', 'alt', 'f']" @shortkey="sumScale()" style="display:none"></button>
+  <button v-shortkey="['ctrl', 'alt','g']" @shortkey="restScale()" style="display:none"></button>
+    <svg width="100%" :height="`${workflow.height}vh`">
       <line-link
         :line="line"
         v-for="(line, index) in lines"
         :key="`line${index}`"
-        @moveTree="moveTree(line.id, $event)"
         @linkDelete="linkDelete(line.id)"
       />
     </svg>
@@ -28,6 +29,18 @@
       @linkingStop="linkingNodeStop"
       @nodeSelected="nodeSelected(node.id, $event)"
     ></card>
+
+    <action
+      :node.sync="node"
+      v-for="(node, index) in getNodesByType('action')"
+      :key="`action${index}`"
+      :nodeViewScale="getNodeViewScale"
+      @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+      @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+      @linkingStart="linkingNodeStart"
+      @linkingStop="linkingNodeStop"
+      @nodeSelected="nodeSelected(node.id, $event)"
+    ></action>
 
     <diamond
       :node.sync="node"
@@ -47,6 +60,7 @@
 import LineLink from "./line-link/line-link.component.vue";
 import Card from "./card/card.component.vue";
 import Diamond from "./diamon/diamon.component.vue";
+import Action from "./action/action.component.vue";
 
 import { getMousePosition } from "../core/position";
 import { Component, Vue, Prop } from "vue-property-decorator";
@@ -58,9 +72,10 @@ import {
 } from "./../../shared/workflow/workflow.type";
 import { INodeViewScale, INode } from "./../../shared/workflow/node.type";
 import { Line, ILine } from "./../../shared/workflow/line.type";
+import { LocationPort } from '../../shared/workflow/enum';
 
 @Component({
-  components: { LineLink, Card, Diamond },
+  components: { LineLink, Card, Diamond ,Action},
   name: "WorkFlowPath"
 })
 export default class extends Vue {
@@ -98,14 +113,14 @@ export default class extends Vue {
       [cx, cy] = fromNode!.getPositionNodePort(
         this.workflow.scene.centerX,
         this.workflow.scene.centerY,
-        line.fromTypePort!,
+        line.locationPortInput,
         this.workflow.scene.scale
       );
 
       [ex, ey] = toNode!.getPositionNodePort(
         this.workflow.scene.centerX,
         this.workflow.scene.centerY,
-        "top",
+        LocationPort.Top,
         this.workflow.scene.scale
       );
 
@@ -125,7 +140,7 @@ export default class extends Vue {
       [cx, cy] = fromNode!.getPositionNodePort(
         this.workflow.scene.centerX,
         this.workflow.scene.centerY,
-        this.linkAction.port,
+        this.linkAction.locationPortInput,
         this.workflow.scene.scale
       );
       let currentLink = new Line();
@@ -139,16 +154,24 @@ export default class extends Vue {
     return lines;
   }
 
+  sumScale() {
+    this.workflow.scene.scale += 0.2;
+  }
+  restScale() {
+    if(this.workflow.scene.scale > 0.6)
+    this.workflow.scene.scale-= 0.2;
+  }
+
   findNodeWithID(id: number | null) {
     return this.workflow.scene.nodes.find(item => {
       return id === item.id;
     });
   }
 
-  linkingNodeStart(node: INode, port: string) {
+  linkingNodeStart(node: INode, locationPortInput: string) {
     this.linkAction = {
       from: node.id,
-      port: port,
+      locationPortInput: locationPortInput,
       x: 0,
       y: 0,
       isDragging: true
@@ -174,7 +197,7 @@ export default class extends Vue {
         let newLink: ILine = new Line();
         newLink.id = maxID + 1;
         newLink.from = this.linkAction.from;
-        newLink.fromTypePort = this.linkAction.port;
+        newLink.locationPortInput = this.linkAction.locationPortInput;
         newLink.to = node.id;
 
         this.workflow.scene.linesLinks.push(newLink);
@@ -259,36 +282,6 @@ export default class extends Vue {
       this.nodeAction.selected = null;
     }
     this.$emit("canvasClick", e);
-  }
-
-  moveTree(id: number, e: any) {
-    [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-    let posX: number, posY: number;
-    [posX, posY] = [
-      this.mouse.x - this.mouse.lastX,
-      this.mouse.y - this.mouse.lastY
-    ];
-
-    let lines: ILine[] = [];
-
-    let line = this.workflow.scene.linesLinks.filter(line => {
-      return line.id === id;
-    })[0];
-
-    /* nodes.forEach(x=>{
-      x.position.x = x.position.x + posX;
-      x.position.y = x.position.y + posY;
-    });
-
-    let nodesupdate = this.workflow.scene.nodes.forEach(node => {
-      let nodeTemp = nodes.filter(nodeExist => {
-        return nodeExist.id === node.id;
-      });
-
-      if(nodeTemp.length >0) {
-        node.position = nodeTemp[0].position;
-      }
-    });*/
   }
 
   linkMove(e: any) {

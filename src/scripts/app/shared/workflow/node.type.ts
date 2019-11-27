@@ -1,4 +1,5 @@
 import { IPosition, Position } from './position.type'
+import { LocationPort } from './enum';
 
 export interface INode {
     id: number,
@@ -59,8 +60,8 @@ export class Diamon extends Node implements INode {
 
     constructor(id: number | null) {
         super(id);        
-        this.width = 100;
-        this.height = 100;
+        this.width = 200;
+        this.height = 200;
 
         var leftProportional = this.width * 40 / 200;
         var rightProportional = this.width * 40 / 200;
@@ -79,13 +80,13 @@ export class Diamon extends Node implements INode {
         var leftProportional = (this.width * 40  * scale)/ 200;
         var rightProportional = (this.width * 40 * scale) / 200;
 
-        if (typePort === "top") {
+        if (typePort === LocationPort.Top) {
             return [x + (this.width*scale)/2, y];
         }        
-        if (typePort === "left") {
+        if (typePort === LocationPort.Left) {
             return [x - leftProportional, y + (this.height * scale) / 2];
         }
-        if (typePort === "right") {
+        if (typePort === LocationPort.Right) {
             return [x + (this.width*scale) + rightProportional, y + this.height*scale/2];
         }
         return [0, 0];
@@ -97,19 +98,27 @@ export class Card extends Node implements INode {
     constructor(id: number | null) {
         super(id);        
         this.width = 300;
-        this.height = 100;
+        this.height = 150;
     }
 
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
         let x = centerX + this.position.x * scale;
         let y = centerY + this.position.y * scale;
 
-        if (typePort === "top") {
+        if (typePort === LocationPort.Top) {
             return [x + (this.width*scale)/2, y];
         }
-        if (typePort === "bottom") {
+        if (typePort === LocationPort.Bottom) {
             return [x + (this.width*scale)/2, y + (this.height * scale)];
         }
         return [0, 0];
+    }
+}
+
+export class Action extends Card implements INode {
+    constructor(id: number | null) {
+        super(id);        
+        this.width = 300;
+        this.height = 100;
     }
 }

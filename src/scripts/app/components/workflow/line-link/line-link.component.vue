@@ -53,8 +53,7 @@ export default class extends Vue {
     return `M ${cx}, ${cy} C ${x1}, ${y1}, ${x2}, ${y2}, ${ex}, ${ey}`;
   }
 
-  handleMouseOver() {
-    
+  handleMouseOver() {    
     if (this.line.id) {
       this.show.delete = true;
     }
@@ -65,13 +64,11 @@ export default class extends Vue {
   }
 
   caculateCenterPoint() {
-    // caculate arrow position: the center point between start and end
     const dx = (this.line.link.end.x - this.line.link.start.x) / 2;
     const dy = (this.line.link.end.y - this.line.link.start.y) / 2;
     return [this.line.link.start.x + dx, this.line.link.start.y + dy];
   }
   caculateRotation() {
-    // caculate arrow rotation
     const angle = -Math.atan2(
       this.line.link.end.x - this.line.link.start.x,
       this.line.link.end.y - this.line.link.start.y
@@ -82,11 +79,6 @@ export default class extends Vue {
 
   linkDelete() {
     this.$emit("linkDelete");
-  }
-
-  moveTree(e: any) {
-    this.$emit("moveTree", e);
-    e.preventDefault();
   }
 }
 </script>

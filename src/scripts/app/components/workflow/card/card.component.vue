@@ -10,8 +10,8 @@
     <div class="node-port node-input" @mousedown="inputMouseDown" @mouseup="inputMouseUp"></div>
     <div class="node-main">
       <div v-text="node.type" class="node-type"></div>
-      <div clas="node-custom">
-      <div v-text="node.label" class="node-label"></div>
+      <div class="node-custom">
+        <div v-text="node.label" class="node-label"></div>
       </div>
     </div>
     <div class="node-port node-output" @mousedown="outputMouseDown"></div>
@@ -22,6 +22,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { INode, INodeViewScale } from "./../../../shared/workflow/node.type";
+import { LocationPort } from "../../../shared/workflow/enum";
 
 @Component
 export default class extends Vue {
@@ -49,10 +50,8 @@ export default class extends Vue {
         this.node.position.x * this.nodeViewScale.scale +
         "px",
       transform: `scale(${this.nodeViewScale.scale})`,
-      width: this.node.width +
-        "px",
-      'min-height' :this.node.height +
-        "px"
+      width: this.node.width + "px",
+      "min-height": this.node.height + "px"
     };
   }
 
@@ -80,7 +79,7 @@ export default class extends Vue {
   }
 
   outputMouseDown(e: any) {
-    this.$emit("linkingStart", this.node, "bottom");
+    this.$emit("linkingStart", this.node, LocationPort.Bottom);
     e.preventDefault();
   }
 
@@ -89,7 +88,7 @@ export default class extends Vue {
   }
 
   inputMouseUp(e: any) {
-    this.$emit("linkingStop",this.node, "top");
+    this.$emit("linkingStop", this.node, LocationPort.Top);
     e.preventDefault();
   }
 }
@@ -102,13 +101,13 @@ $portSize: 12;
 .flowchart-node {
   margin: 0;
   position: absolute;
-  box-sizing: border-box;  
+  box-sizing: border-box;
   border: 1px solid #e4e6eb;
   border-radius: 4px;
   border-top-left-radius: 1.3em;
   border-bottom-right-radius: 1.3em;
   border-top-right-radius: 1.3em;
-  background-color:#e4e4e4;
+  background-color: #e4e4e4;
   color: rgba(0, 0, 0, 1);
   margin: 1px 0;
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
@@ -116,21 +115,22 @@ $portSize: 12;
   opacity: 0.9;
   cursor: move;
   transform-origin: top left;
-  
+
   .node-main {
     text-align: center;
-    
+
     .node-type {
       background: $themeColor;
-      color: white;          
+      color: white;
       padding: 6px 12px;
       border-top-left-radius: 1.3em;
       border-top-right-radius: 1.3em;
     }
+
     .node-custom {
-      padding: 6px 12px;
+      padding: 8px 12px;
       .node-label {
-        font-size: 13px;
+        font-size: 14px;
       }
     }
   }
@@ -158,9 +158,9 @@ $portSize: 12;
     position: absolute;
     right: -6px;
     top: -6px;
-    font-size: 12px;
-    width: 12px;
-    height: 12px;
+    font-size: 10px;
+    width: 16px;
+    height: 16px;
     color: $themeColor;
     cursor: pointer;
     background: white;
@@ -168,7 +168,8 @@ $portSize: 12;
     border-radius: 100px;
     text-align: center;
     &:hover {
-      background: $themeColor;
+      background: red;
+      border: 1px solid rgb(138, 23, 23);
       color: white;
     }
   }

@@ -41,7 +41,7 @@ export class Scene implements IScene {
 export class LinkAction {
     isDragging: boolean = false;
     from: number = 0;
-    port:string = '';
+    locationPortInput:string = '';
     x: number = 0;
     y: number=0;
 }

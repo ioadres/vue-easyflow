@@ -3,9 +3,8 @@ import {IPosition} from './position.type'
 export interface ILine {
     id: number
     from: number | null,
-    fromTypePort: string | null,
+    locationPortInput: string,
     to: number | null,
-    toTypePort: string | null,
     link: ILink,    
     type: string;
 }
@@ -18,9 +17,8 @@ export interface ILink {
 export class Line implements ILine{
     id!: number;
     from!: number;
-    fromTypePort!: string;
+    locationPortInput: string = "";
     to!: number;
-    toTypePort!: string;
     link!: ILink;    
     type!: string;
 

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="diamond"
+    class="flowchart-node"
     :style="nodeStyle"
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
@@ -8,17 +8,13 @@
     v-bind:class="{selected: nodeViewScale.selected === node.id}"
   >
     <div class="node-port node-input" @mousedown="inputMouseDown" @mouseup="inputMouseUp"></div>
-    <div class="node-main" :style="nodeWidhtAndHeightStyle">
+    <div class="node-main">
+      <div v-text="node.type" class="node-type"></div>
       <div class="node-custom">
         <div v-text="node.label" class="node-label"></div>
       </div>
     </div>
-    <div class="node-port node-output" :style="nodeLeftPortStyle" @mousedown="outputMouseDownLeft"></div>
-    <div
-      class="node-port node-output"
-      :style="nodeRightPortStyle"
-      @mousedown="outputMouseDownRight"
-    ></div>
+    <div class="node-port node-output" @mousedown="outputMouseDown"></div>
     <div v-show="show.delete" class="node-delete" @mouseup="deleteHandleUp">&times;</div>
   </div>
 </template>
@@ -26,11 +22,11 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { INode, INodeViewScale } from "./../../../shared/workflow/node.type";
-import { LocationPort } from "./../../../shared/workflow/enum";
+import { LocationPort } from "../../../shared/workflow/enum";
 
 @Component
 export default class extends Vue {
-  public name = "Diamond";
+  public name = "Action";
 
   @Prop() node!: INode;
   @Prop() nodeViewScale!: INodeViewScale;
@@ -43,13 +39,6 @@ export default class extends Vue {
     super();
   }
 
-  get nodeWidhtAndHeightStyle() {
-    return {
-      width: this.node.width + "px !important",
-      height: this.node.height + "px!important"
-    };
-  }
-
   get nodeStyle() {
     return {
       top:
@@ -60,23 +49,9 @@ export default class extends Vue {
         this.nodeViewScale.centerX +
         this.node.position.x * this.nodeViewScale.scale +
         "px",
-      width: this.node.width + "px !important",
-      "min-height": this.node.height + "px!important",
-      transform: `scale(${this.nodeViewScale.scale})`
-    };
-  }
-
-  get nodeRightPortStyle() {
-    return {
-      top: this.node.rightPort.y + "px",
-      left: this.node.rightPort.x + "px"
-    };
-  }
-
-  get nodeLeftPortStyle() {
-    return {
-      top: this.node.leftPort.y + "px",
-      left: this.node.leftPort.x + "px"
+      transform: `scale(${this.nodeViewScale.scale})`,
+      width: this.node.width + "px",
+      "min-height": this.node.height + "px"
     };
   }
 
@@ -103,13 +78,8 @@ export default class extends Vue {
     this.show.delete = false;
   }
 
-  outputMouseDownLeft(e: any) {
-    this.$emit("linkingStart", this.node, LocationPort.Left);
-    e.preventDefault();
-  }
-
-  outputMouseDownRight(e: any) {
-    this.$emit("linkingStart", this.node, LocationPort.Right);
+  outputMouseDown(e: any) {
+    this.$emit("linkingStart", this.node, LocationPort.Bottom);
     e.preventDefault();
   }
 
@@ -127,74 +97,34 @@ export default class extends Vue {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 $themeColor: rgb(0, 153, 255);
-$portSize: 14;
-
-.diamond {
+$portSize: 12;
+.flowchart-node {
+  margin: 0;
   position: absolute;
-  text-align: center;
-  z-index: 0;
-}
-.diamond:before {
-  position: absolute;
-  content: "";
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  transform: rotateX(45deg) rotateZ(45deg);
-  background-color: #e4e4e4;
-  border: 1px solid #e4e6eb;
-  opacity: 0.9;
-  z-index: -20;
-}
-.diamond:after {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  content: "";
-  height: calc(100% - 22px);
-  width: calc(100% - 22px);
-  transform: rotateX(45deg) rotateZ(45deg);
-  z-index: -20;
-}
-
-.diamond {
+  box-sizing: border-box;
+  border: 1px solid $themeColor;
   color: rgba(0, 0, 0, 1);
+  margin: 1px 0;
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
-
+  z-index: 1;
+  opacity: 0.9;
   cursor: move;
   transform-origin: top left;
 
   .node-main {
     text-align: center;
 
-    .node-custom {
-      margin-left: auto;
-      margin-right: auto;
-      position: relative;
-      top: 45%;
-      transform: translateY(-50%);
+    .node-type {
+      color: $themeColor;
+      padding: 6px 12px;
+    }
 
-      .node-type {
-        background: $themeColor;
-        color: white;
-        padding: 5px 5px;
-        border-top-right-radius: 1.3em;
-      }
+    .node-custom {
+      padding: 8px 12px;
       .node-label {
         font-size: 14px;
       }
     }
-  }
-
-  .node-main:after {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    content: "";
-    height: calc(100% - 22px);
-    width: calc(100% - 22px);
-    z-index: 0;
   }
   .node-port {
     position: absolute;
@@ -214,9 +144,8 @@ $portSize: 14;
     top: #{-2 + $portSize/-2}px;
   }
   .node-output {
-    position: absolute;
+    bottom: #{-2 + $portSize/-2}px;
   }
-
   .node-delete {
     position: absolute;
     right: -6px;
@@ -237,14 +166,7 @@ $portSize: 14;
     }
   }
 }
-.selected:before {
-  position: absolute;
-  content: "";
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  transform: rotateX(45deg) rotateZ(45deg);
+.selected {
   box-shadow: 0 0 0 2px $themeColor;
 }
 </style>
