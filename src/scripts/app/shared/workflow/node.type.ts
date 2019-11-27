@@ -96,7 +96,7 @@ export class Diamon extends Node implements INode {
     }
 }
 
-export class Card extends Node implements INode {
+export class General extends Node implements INode {
 
     constructor(id: number | null) {
         super(id);        
@@ -137,7 +137,7 @@ export class PointStart extends Node implements INode {
     }
 }
 
-export class Action extends Card implements INode {
+export class Action extends Node implements INode {
     constructor(id: number | null) {
         super(id);        
         this.width = 300;

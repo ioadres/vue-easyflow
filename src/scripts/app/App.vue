@@ -4,10 +4,10 @@
     <div class="tool-wrapper">
       <input type="text" v-model="label" />
       <select v-model="type">
-        <option value="card">Card</option>
+        <option value="general">General</option>
         <option value="action">Action</option>
         <option value="desicion">Desicion</option>
-        <option value="point-start">start</option>
+        <option value="point-start">Point Start</option>
       </select>
       <button @click="addNode">Add</button>
       <button @click="exportData">Exportar</button>
@@ -29,7 +29,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
 import { IWorkFlow } from "./shared/workflow/workflow.type";
 import { ILink } from "./shared/workflow/line.type";
-import { Node, INode, Card, Diamon, Action, PointStart } from "./shared/workflow/node.type";
+import { Node, INode, General, Diamon, Action, PointStart } from "./shared/workflow/node.type";
 import { Position } from "./shared/workflow/position.type";
 @Component({
   components: { WorkFlowPath }
@@ -75,7 +75,7 @@ export default class extends Vue {
       })
     );
 
-    let node: INode = new Card(maxID + 1);
+    let node: INode = new General(maxID + 1);
     if (this.type === "desicion") {
       node = new Diamon(maxID + 1);
     }

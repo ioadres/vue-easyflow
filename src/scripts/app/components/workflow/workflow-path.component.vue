@@ -30,22 +30,22 @@
       @nodeSelected="nodeSelected(node.id, $event)"
     ></point-start>
 
-    <card
+    <general
       :node.sync="node"
-      v-for="(node, index) in getNodesByType('card')"
-      :key="`card${index}`"
+      v-for="(node, index) in getNodesByType('general')"
+      :key="`general-${index}`"
       :nodeViewScale="getNodeViewScale"
       @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
       @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
       @linkingStart="linkingNodeStart"
       @linkingStop="linkingNodeStop"
       @nodeSelected="nodeSelected(node.id, $event)"
-    ></card>
+    ></general>
 
     <action
       :node.sync="node"
       v-for="(node, index) in getNodesByType('action')"
-      :key="`action${index}`"
+      :key="`action-${index}`"
       :nodeViewScale="getNodeViewScale"
       @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
       @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
@@ -57,7 +57,7 @@
     <diamond
       :node.sync="node"
       v-for="(node, index) in getNodesByType('desicion')"
-      :key="`desicion${index}`"
+      :key="`desicion-${index}`"
       :nodeViewScale="getNodeViewScale"
       @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
       @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
@@ -70,7 +70,7 @@
 
 <script lang="ts">
 import LineLink from "./line-link/line-link.component.vue";
-import Card from "./card/card.component.vue";
+import General from "./general/general.component.vue";
 import Diamond from "./diamon/diamon.component.vue";
 import Action from "./action/action.component.vue";
 import PointStart from "./point-start/point-start.component.vue"
@@ -88,7 +88,7 @@ import { Line, ILine } from "./../../shared/workflow/line.type";
 import { LocationPort } from "../../shared/workflow/enum";
 
 @Component({
-  components: { LineLink, Card, Diamond, Action, PointStart },
+  components: { LineLink, General, Diamond, Action, PointStart },
   name: "WorkFlowPath"
 })
 export default class extends Vue {

@@ -45,7 +45,8 @@ $portSize: 12;
   .node-main {
       text-align: center;
     .node-label {
-      padding: 40%;
+      padding-top: 35%;
+      padding-bottom: 30%;
       font-size: 14px;
     }
   }  
