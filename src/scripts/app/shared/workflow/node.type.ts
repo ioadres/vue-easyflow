@@ -120,5 +120,25 @@ export class Action extends Card implements INode {
         super(id);        
         this.width = 300;
         this.height = 100;
+
+        var rightProportional = this.width * 40 / 200;
+        this.rightPort.x = this.width;     
+        this.rightPort.y = this.height/2 - 10;
+    }
+
+    public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
+        let x = centerX + this.position.x * scale;
+        let y = centerY + this.position.y * scale;
+
+        if (typePort === LocationPort.Top) {
+            return [x + (this.width*scale)/2, y];
+        }
+        if (typePort === LocationPort.Bottom) {
+            return [x + (this.width*scale)/2, y + (this.height * scale)];
+        }
+        if (typePort === LocationPort.Right) {
+            return [x + (this.width*scale), y + this.height*scale/2];
+        }
+        return [0, 0];
     }
 }

@@ -14,11 +14,7 @@
       </div>
     </div>
     <div class="node-port node-output" :style="nodeLeftPortStyle" @mousedown="outputMouseDownLeft"></div>
-    <div
-      class="node-port node-output"
-      :style="nodeRightPortStyle"
-      @mousedown="outputMouseDownRight"
-    ></div>
+    <div class="node-port node-output" :style="nodeRightPortStyle" @mousedown="outputMouseDownRight"></div>
     <div v-show="show.delete" class="node-delete" @mouseup="deleteHandleUp">&times;</div>
   </div>
 </template>

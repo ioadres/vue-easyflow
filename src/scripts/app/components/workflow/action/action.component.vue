@@ -15,6 +15,7 @@
       </div>
     </div>
     <div class="node-port node-output" @mousedown="outputMouseDown"></div>
+    <div class="node-port node-output node-port-right" :style="nodeRightPortStyle" @mousedown="outputMouseDownRight"></div>
     <div v-show="show.delete" class="node-delete" @mouseup="deleteHandleUp">&times;</div>
   </div>
 </template>
@@ -55,6 +56,13 @@ export default class extends Vue {
     };
   }
 
+  get nodeRightPortStyle() {
+    return {
+      top: this.node.rightPort.y + "px",
+      left: this.node.rightPort.x + "px"
+    };
+  }
+
   deleteHandleUp(e: any) {
     this.$emit("handleNodeEntrydelete", this.node, e);
   }
@@ -80,6 +88,11 @@ export default class extends Vue {
 
   outputMouseDown(e: any) {
     this.$emit("linkingStart", this.node, LocationPort.Bottom);
+    e.preventDefault();
+  }
+
+  outputMouseDownRight(e: any) {
+    this.$emit("linkingStart", this.node, LocationPort.Right);
     e.preventDefault();
   }
 
@@ -146,6 +159,15 @@ $portSize: 12;
   .node-output {
     bottom: #{-2 + $portSize/-2}px;
   }
+  .node-port-right {
+    border: 1px solid rgb(138, 23, 23);
+    border-radius: 100px;
+    background: rgb(216, 206, 206);
+    &:hover {
+      border: 1px solid white;
+    }
+  }
+
   .node-delete {
     position: absolute;
     right: -6px;
