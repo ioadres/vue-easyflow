@@ -27,7 +27,7 @@ import  BaseDiagram from "../shared/base-diagram";
 
 @Component
 export default class extends BaseDiagram implements Vue {
-  public name = "Card";
+  public name = "General";
 }
 </script>
 
