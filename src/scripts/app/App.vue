@@ -74,8 +74,7 @@ export default class extends Vue {
       })
     );
 
-    let node: INode;
-    node = new Card(maxID + 1);
+    let node: INode = new Card(maxID + 1);
     if (this.type === "desicion") {
       node = new Diamon(maxID + 1);
     }

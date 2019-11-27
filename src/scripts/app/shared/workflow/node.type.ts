@@ -121,7 +121,6 @@ export class Action extends Card implements INode {
         this.width = 300;
         this.height = 100;
 
-        var rightProportional = this.width * 40 / 200;
         this.rightPort.x = this.width;     
         this.rightPort.y = this.height/2 - 10;
     }
