@@ -92,6 +92,12 @@ $portSize: 14;
       top: 45%;
       transform: translateY(-50%);
 
+      .node-type {
+        background: $themeColor;
+        color: white;
+        padding: 5px 5px;
+        border-top-right-radius: 1.3em;
+      }
       .node-label {
         font-size: 14px;
       }

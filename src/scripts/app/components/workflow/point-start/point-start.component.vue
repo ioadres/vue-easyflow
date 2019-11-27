@@ -40,64 +40,15 @@ export default class extends BaseDiagram implements Vue {
 <style scoped lang="scss">
 $themeColor: rgb(0, 153, 255);
 $portSize: 12;
-.flowchart-node {
-  font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
-  margin: 0;
-  position: absolute;
-  box-sizing: border-box;
-  border: 1px solid #e4e6eb;
+.flowchart-node {  
   border-radius: 100px;
-  background-color: #e4e4e4;
-  color: rgba(0, 0, 0, 1);
-  margin: 1px 0;
-  z-index: 1;
-  opacity: 0.9;
-  cursor: move;
-  transform-origin: top left;
-
   .node-main {
       text-align: center;
     .node-label {
       padding: 40%;
       font-size: 14px;
     }
-  }
-  .node-port {
-    position: absolute;
-    width: #{$portSize}px;
-    height: #{$portSize}px;
-    left: 50%;
-    transform: translate(-50%);
-    border: 1px solid #ccc;
-    border-radius: 100px;
-    background: white;
-    &:hover {
-      background: $themeColor;
-      border: 1px solid $themeColor;
-    }
-  }
-  .node-output {
-    bottom: #{-2 + $portSize/-2}px;
-  }
-  .node-delete {
-    position: absolute;
-    right: -6px;
-    top: -6px;
-    font-size: 10px;
-    width: 16px;
-    height: 16px;
-    color: $themeColor;
-    cursor: pointer;
-    background: white;
-    border: 1px solid $themeColor;
-    border-radius: 100px;
-    text-align: center;
-    &:hover {
-      background: red;
-      border: 1px solid rgb(138, 23, 23);
-      color: white;
-    }
-  }
+  }  
 }
 .selected {
   box-shadow: 0 0 0 2px $themeColor;

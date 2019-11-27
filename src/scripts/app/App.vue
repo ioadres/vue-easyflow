@@ -106,17 +106,7 @@ export default class extends Vue {
 </script>
 
 <style lang="scss">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin: 0;
-  overflow: hidden;
-  height: 800px;
-  .tool-wrapper {
-    position: relative;
-  }
-}
+
+  @import '../../styles/main.scss'
+
 </style>
