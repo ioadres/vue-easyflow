@@ -302,6 +302,7 @@ export default class extends Vue {
 
   handleNodeEntrydelete(nodeToDelete: INode, e: any) {
     if (!this.linkAction.isDragging) {
+      this.nodeAction.selected = null;
       this.workflow.scene.nodes = this.workflow.scene.nodes.filter(node => {
         return node.id !== nodeToDelete.id;
       });

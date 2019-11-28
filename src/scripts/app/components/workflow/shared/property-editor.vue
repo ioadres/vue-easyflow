@@ -22,7 +22,7 @@ import { INode } from "../../../shared/workflow/node.type";
 export default class extends Vue {
   public Name = "PropertyEditor";
   @Prop() isVisible: boolean = false;
-  @Prop() node!: INode;
+  @Prop() node?: INode;
 }
 </script>
 
