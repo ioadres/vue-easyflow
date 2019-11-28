@@ -12,10 +12,6 @@ export default class BaseDiagram extends Vue {
         delete: false
     };
 
-    constructor() {
-        super();
-    }
-
     get nodeStyle() {
         return {
             top:

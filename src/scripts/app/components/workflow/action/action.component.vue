@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flowchart-node"
+    class="flowchart-node flowchart-node-container"
     :style="nodeStyle"
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
@@ -21,8 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { LocationPort } from "../../../shared/workflow/enum";
+import { Component, Vue } from "vue-property-decorator";
 import  BaseDiagram from "../shared/base-diagram";
 
 @Component
@@ -42,7 +41,6 @@ $portSize: 12;
   border: 1px solid $themeColor;
 
   .node-main {
-    text-align: center;
     .node-type {
       color: $themeColor;
       padding: 6px 12px;

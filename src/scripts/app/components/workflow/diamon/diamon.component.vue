@@ -1,6 +1,6 @@
 <template>
   <div
-    class="diamond"
+    class="diamond flowchart-node-container"
     :style="nodeStyle"
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
@@ -13,16 +13,23 @@
         <div v-text="node.label" class="node-label"></div>
       </div>
     </div>
-    <div class="node-port node-output" :style="nodeLeftPortStyle" @mousedown="outputMouseDownLeft"></div>
-    <div class="node-port node-output" :style="nodeRightPortStyle" @mousedown="outputMouseDownRight"></div>
+    <div
+      class="node-port node-output node-port-left"
+      :style="nodeLeftPortStyle"
+      @mousedown="outputMouseDownLeft"
+    ></div>
+    <div
+      class="node-port node-output node-port-right"
+      :style="nodeRightPortStyle"
+      @mousedown="outputMouseDownRight"
+    ></div>
     <div v-show="show.delete" class="node-delete" @mouseup="deleteHandleUp">&times;</div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { LocationPort } from "../../../shared/workflow/enum";
-import  BaseDiagram from "../shared/base-diagram";
+import { Component, Vue } from "vue-property-decorator";
+import BaseDiagram from "../shared/base-diagram";
 
 @Component
 export default class extends BaseDiagram implements Vue {
@@ -43,10 +50,13 @@ export default class extends BaseDiagram implements Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$themeColor: rgb(0, 153, 255);
-$portSize: 14;
+@import "../../../../../styles/property.scss";
 
 .diamond {
+  color: rgba(0, 0, 0, 1);
+  font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
+  cursor: move;
+  transform-origin: top left;
   position: absolute;
   text-align: center;
   z-index: 0;
@@ -75,82 +85,31 @@ $portSize: 14;
   z-index: -20;
 }
 
-.diamond {
-  color: rgba(0, 0, 0, 1);
-  font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
-
-  cursor: move;
-  transform-origin: top left;
-
+.flowchart-node-container {
   .node-main {
-    text-align: center;
-
     .node-custom {
       margin-left: auto;
       margin-right: auto;
       position: relative;
       top: 45%;
       transform: translateY(-50%);
-
-      .node-type {
-        background: $themeColor;
-        color: white;
-        padding: 5px 5px;
-        border-top-right-radius: 1.3em;
-      }
-      .node-label {
-        font-size: 14px;
-      }
+    }
+  }
+  .node-port-right {
+    border: 1px solid rgb(138, 23, 23);
+    border-radius: 100px;
+    background: rgba(247, 105, 105, 0.445);
+    &:hover {
+      border: 1px solid white;
     }
   }
 
-  .node-main:after {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    content: "";
-    height: calc(100% - 22px);
-    width: calc(100% - 22px);
-    z-index: 0;
-  }
-  .node-port {
-    position: absolute;
-    width: #{$portSize}px;
-    height: #{$portSize}px;
-    left: 50%;
-    transform: translate(-50%);
-    border: 1px solid #ccc;
+  .node-port-left {
+    border: 1px solid rgb(33, 138, 23);
     border-radius: 100px;
-    background: white;
+    background: rgba(69, 207, 115, 0.445);
     &:hover {
-      background: $themeColor;
-      border: 1px solid $themeColor;
-    }
-  }
-  .node-input {
-    top: #{-2 + $portSize/-2}px;
-  }
-  .node-output {
-    position: absolute;
-  }
-
-  .node-delete {
-    position: absolute;
-    right: -6px;
-    top: -6px;
-    font-size: 10px;
-    width: 16px;
-    height: 16px;
-    color: $themeColor;
-    cursor: pointer;
-    background: white;
-    border: 1px solid $themeColor;
-    border-radius: 100px;
-    text-align: center;
-    &:hover {
-      background: red;
-      border: 1px solid rgb(138, 23, 23);
-      color: white;
+      border: 1px solid white;
     }
   }
 }

@@ -63,16 +63,16 @@ export class Diamon extends Node implements INode {
 
     constructor(id: number | null) {
         super(id);        
-        this.width = 200;
-        this.height = 200;
+        this.width = 150;
+        this.height = 150;
 
-        var leftProportional = this.width * 40 / 200;
-        var rightProportional = this.width * 40 / 200;
+        var leftProportional = this.width * 45 / 200;
+        var rightProportional = this.width * 45 / 200;
 
         this.leftPort.x = -leftProportional;        
-        this.leftPort.y = this.height/2 - 10;
+        this.leftPort.y = this.height/2 -5;
         this.rightPort.x = this.width + rightProportional;        
-        this.rightPort.y = this.height/2 - 10;
+        this.rightPort.y = this.height/2 - 5;
 
   
     }
@@ -80,8 +80,8 @@ export class Diamon extends Node implements INode {
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
         let x = centerX + this.position.x * scale;
         let y = centerY + this.position.y * scale;
-        var leftProportional = (this.width * 40  * scale)/ 200;
-        var rightProportional = (this.width * 40 * scale) / 200;
+        var leftProportional = (this.width * 45  * scale)/ 200;
+        var rightProportional = (this.width * 45 * scale) / 200;
 
         if (typePort === LocationPort.Top) {
             return [x + (this.width*scale)/2, y];

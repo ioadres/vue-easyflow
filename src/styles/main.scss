@@ -1,5 +1,4 @@
-$themeColor: rgb(0, 153, 255);
-$portSize: 12;
+@import "./property.scss";
 
 html,
 body,
@@ -38,20 +37,28 @@ body,
 }
 
 .flowchart-node {
-    font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
-    margin: 0;
-    position: absolute;
-    box-sizing: border-box;
-    border: 1px solid #e4e6eb;
-    border-radius: 100px;
-    background-color: #e4e4e4;
-    color: rgba(0, 0, 0, 1);
-    margin: 1px 0;
-    z-index: 1;
-    opacity: 0.9;
-    cursor: move;
-    transform-origin: top left;
- 
+  font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
+  margin: 0;
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #e4e6eb;
+  border-radius: 100px;
+  background-color: #e4e4e4;
+  color: rgba(0, 0, 0, 1);
+  margin: 1px 0;
+  z-index: 1;
+  opacity: 0.9;
+  cursor: move;
+  transform-origin: top left;
+}
+.flowchart-node-container {
+  .node-main {
+    text-align: center;
+    .node-label {
+      font-size: 14px;
+    }
+  }
+
   .node-port {
     position: absolute;
     width: #{$portSize}px;
