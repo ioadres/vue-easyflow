@@ -1,7 +1,7 @@
 <template>
   <div class="property-container" v-show="isVisible">
     <div class="property-legend">
-      <p>Propiedades</p>
+      <span>Propiedades</span>
     </div>
     <div class="property-main">
       <div class="property">
@@ -30,18 +30,19 @@ export default class extends Vue {
 .property-container {
   font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif;
   width: 250px;
-  border-left: 3px solid #b5b1b1;
-  border: 2px solid #b5b1b1;
+  border-left: 3px solid #1e1e1e;
+  background-color: #333333;
+  border: 2px solid #1e1e1e;
   float: right;
   clear: both;
   height: 100vh;
 
   .property-legend {
-    border-bottom: 1px solid #b5b1b1;
+    background-color: #1e1e1e;
+    color: #b1b2b3;
+    padding: 5px;
     text-align: center;
-    p {
-      font-size: 12px;
-    }
+    font-size: 12px;
   }
 
   .property-main {
@@ -49,14 +50,15 @@ export default class extends Vue {
     .property {
       width: 100%;
       display: inline-flex;
-      border-bottom: 1px solid #b5b1b1;
+      border-bottom: 1px solid #1e1e1e;
 
-          font-size: 12px;
+      font-size: 12px;
       .label {
+          color: #b1b2b3;
         padding: 5px;
-        font-weight: 700;
+        font-weight: 500;
         width: 20%;
-        border-right: 1px solid #eee;
+        border-right: 1px solid #1e1e1e;
       }
 
       .input {
@@ -67,6 +69,8 @@ export default class extends Vue {
           height: 28px;
           border: 0px;
           text-align: center;
+          background-color: #3c3c3c;
+          color: #fff;
         }
       }
     }
