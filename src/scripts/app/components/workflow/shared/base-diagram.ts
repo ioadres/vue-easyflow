@@ -23,8 +23,22 @@ export default class BaseDiagram extends Vue {
                 this.node.position.x * this.nodeViewScale.scale +
                 "px",
             transform: `scale(${this.nodeViewScale.scale})`,
-            width: this.node.width + "px",
+            "width": this.node.width + "px",
             "min-height": this.node.height + "px"
+        };
+    }
+
+    get nodeWithoutWidthAndHeightStyle() {
+        return {
+            top:
+                this.nodeViewScale.centerY +
+                this.node.position.y * this.nodeViewScale.scale +
+                "px",
+            left:
+                this.nodeViewScale.centerX +
+                this.node.position.x * this.nodeViewScale.scale +
+                "px",
+            transform: `scale(${this.nodeViewScale.scale})`
         };
     }
 

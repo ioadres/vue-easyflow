@@ -1,79 +1,96 @@
-
-  
 <template>
-  <div
-    class="flowchart-container"
-    @mousemove="handleMove"
-    @mouseup="handleUp"
-    @mousedown="handleDown"
-  >
-    <button v-shortkey="['ctrl', 'alt', 'f']" @shortkey="sumScale()" style="display:none"></button>
-    <button v-shortkey="['ctrl', 'alt','g']" @shortkey="restScale()" style="display:none"></button>
-    <svg width="100%" :height="`${workflow.height}vh`">
-      <line-link
-        :line="line"
-        v-for="(line, index) in lines"
-        :key="`line${index}`"
-        @linkDelete="linkDelete(line.id)"
-      />
-    </svg>
+  <div>
 
-    <point-start
-      :node.sync="node"
-      v-for="(node, index) in getNodesByType('point-start')"
-      :key="`point-start-${index}`"
-      :nodeViewScale="getNodeViewScale"
-      @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
-      @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
-      @linkingStart="linkingNodeStart"
-      @linkingStop="linkingNodeStop"
-      @nodeSelected="nodeSelected(node.id, $event)"
-    ></point-start>
+    <property-editor :isVisible="propertyIsVisible" 
+        :node.sync="nodePropertySelected">
+    </property-editor>
 
-    <general
-      :node.sync="node"
-      v-for="(node, index) in getNodesByType('general')"
-      :key="`general-${index}`"
-      :nodeViewScale="getNodeViewScale"
-      @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
-      @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
-      @linkingStart="linkingNodeStart"
-      @linkingStop="linkingNodeStop"
-      @nodeSelected="nodeSelected(node.id, $event)"
-    ></general>
+    <div
+      class="flowchart-container"
+      @mousemove="handleMove"
+      @mouseup="handleUp"
+      @mousedown="handleDown"
+    >
+      <button v-shortkey="['ctrl', 'alt', 'f']" @shortkey="sumScale()" style="display:none"></button>
+      <button v-shortkey="['ctrl', 'alt','g']" @shortkey="restScale()" style="display:none"></button>
+      <svg width="100%" :height="`${workflow.height}vh`">
+        <line-link
+          :line="line"
+          v-for="(line, index) in lines"
+          :key="`line${index}`"
+          @linkDelete="linkDelete(line.id)"
+        />
+      </svg>
 
-    <action
-      :node.sync="node"
-      v-for="(node, index) in getNodesByType('action')"
-      :key="`action-${index}`"
-      :nodeViewScale="getNodeViewScale"
-      @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
-      @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
-      @linkingStart="linkingNodeStart"
-      @linkingStop="linkingNodeStop"
-      @nodeSelected="nodeSelected(node.id, $event)"
-    ></action>
+      <point-start
+        :node.sync="node"
+        v-for="(node, index) in getNodesByType('point-start')"
+        :key="`point-start-${index}`"
+        :nodeViewScale="getNodeViewScale"
+        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+        @linkingStart="linkingNodeStart"
+        @linkingStop="linkingNodeStop"
+        @nodeSelected="nodeSelected(node.id, $event)"
+      ></point-start>
 
-    <diamond
-      :node.sync="node"
-      v-for="(node, index) in getNodesByType('desicion')"
-      :key="`desicion-${index}`"
-      :nodeViewScale="getNodeViewScale"
-      @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
-      @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
-      @linkingStart="linkingNodeStart"
-      @linkingStop="linkingNodeStop"
-      @nodeSelected="nodeSelected(node.id, $event)"
-    ></diamond>
+      <general
+        :node.sync="node"
+        v-for="(node, index) in getNodesByType('general')"
+        :key="`general-${index}`"
+        :nodeViewScale="getNodeViewScale"
+        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+        @linkingStart="linkingNodeStart"
+        @linkingStop="linkingNodeStop"
+        @nodeSelected="nodeSelected(node.id, $event)"
+      ></general>
+
+      <action
+        :node.sync="node"
+        v-for="(node, index) in getNodesByType('action')"
+        :key="`action-${index}`"
+        :nodeViewScale="getNodeViewScale"
+        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+        @linkingStart="linkingNodeStart"
+        @linkingStop="linkingNodeStop"
+        @nodeSelected="nodeSelected(node.id, $event)"
+      ></action>
+
+      <label-text
+        :node.sync="node"
+        v-for="(node, index) in getNodesByType('label')"
+        :key="`label-${index}`"
+        :nodeViewScale="getNodeViewScale"
+        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+        @nodeSelected="nodeSelected(node.id, $event)"
+      ></label-text>
+
+      <diamond
+        :node.sync="node"
+        v-for="(node, index) in getNodesByType('desicion')"
+        :key="`desicion-${index}`"
+        :nodeViewScale="getNodeViewScale"
+        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+        @linkingStart="linkingNodeStart"
+        @linkingStop="linkingNodeStop"
+        @nodeSelected="nodeSelected(node.id, $event)"
+      ></diamond>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import LineLink from "./line-link/line-link.component.vue";
+import LabelText from "./label-text/label-text.vue"
 import General from "./general/general.component.vue";
 import Diamond from "./diamon/diamon.component.vue";
 import Action from "./action/action.component.vue";
-import PointStart from "./point-start/point-start.component.vue"
+import PointStart from "./point-start/point-start.component.vue";
+import PropertyEditor from "./shared/property-editor.vue";
 
 import { getMousePosition } from "../core/position";
 import { Component, Vue, Prop } from "vue-property-decorator";
@@ -88,7 +105,15 @@ import { Line, ILine } from "./../../shared/workflow/line.type";
 import { LocationPort } from "../../shared/workflow/enum";
 
 @Component({
-  components: { LineLink, General, Diamond, Action, PointStart },
+  components: {
+    PropertyEditor,
+    LineLink,
+    LabelText,
+    General,
+    Diamond,
+    Action,
+    PointStart
+  },
   name: "WorkFlowPath"
 })
 export default class extends Vue {
@@ -97,6 +122,18 @@ export default class extends Vue {
   private nodeAction: NodeAction = new NodeAction();
   private linkAction: LinkAction = new LinkAction();
   private mouse: Mouse = new Mouse();
+
+  get nodePropertySelected() {
+    if(this.nodeAction.selected! > 0 && this.nodeAction.isDragging == false) {
+      return this.workflow.scene.nodes.find(item => {
+        return item.id === this.nodeAction.selected;
+      });
+    }
+    return {};
+  }
+  get propertyIsVisible(){
+    return this.nodeAction.selected! > 0 && this.nodeAction.isDragging == false;
+  } 
 
   get getNodeViewScale() {
     let nodeViewScale: INodeViewScale = {
@@ -339,5 +376,4 @@ export default class extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-
 </style>

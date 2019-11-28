@@ -66,8 +66,8 @@ export class Diamon extends Node implements INode {
         this.width = 150;
         this.height = 150;
 
-        var leftProportional = this.width * 45 / 200;
-        var rightProportional = this.width * 45 / 200;
+        var leftProportional = this.width * 40 / 200;
+        var rightProportional = this.width * 40 / 200;
 
         this.leftPort.x = -leftProportional;        
         this.leftPort.y = this.height/2 -5;
@@ -80,8 +80,8 @@ export class Diamon extends Node implements INode {
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
         let x = centerX + this.position.x * scale;
         let y = centerY + this.position.y * scale;
-        var leftProportional = (this.width * 45  * scale)/ 200;
-        var rightProportional = (this.width * 45 * scale) / 200;
+        var leftProportional = (this.width * 40  * scale)/ 200;
+        var rightProportional = (this.width * 40 * scale) / 200;
 
         if (typePort === LocationPort.Top) {
             return [x + (this.width*scale)/2, y];
@@ -100,8 +100,8 @@ export class General extends Node implements INode {
 
     constructor(id: number | null) {
         super(id);        
-        this.width = 300;
-        this.height = 150;
+        this.width = 200;
+        this.height = 100;
     }
 
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {
@@ -161,5 +161,13 @@ export class Action extends Node implements INode {
             return [x + (this.width*scale), y + this.height*scale/2];
         }
         return [0, 0];
+    }
+}
+
+export class LabelText extends Node implements INode {
+    constructor(id: number | null) {
+        super(id);        
+        this.width = 100;
+        this.height = 20;
     }
 }

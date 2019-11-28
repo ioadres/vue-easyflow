@@ -1,6 +1,5 @@
 <template>
   <div class="app">
-    <h1>simple flowchart</h1>
     <div class="tool-wrapper">
       <input type="text" v-model="label" />
       <select v-model="type">
@@ -8,6 +7,8 @@
         <option value="action">Action</option>
         <option value="desicion">Desicion</option>
         <option value="point-start">Point Start</option>
+
+        <option value="label">Label</option>
       </select>
       <button @click="addNode">Add</button>
       <button @click="exportData">Exportar</button>
@@ -29,7 +30,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
 import { IWorkFlow } from "./shared/workflow/workflow.type";
 import { ILink } from "./shared/workflow/line.type";
-import { Node, INode, General, Diamon, Action, PointStart } from "./shared/workflow/node.type";
+import { Node, INode, General, Diamon, Action, PointStart, LabelText } from "./shared/workflow/node.type";
 import { Position } from "./shared/workflow/position.type";
 @Component({
   components: { WorkFlowPath }
@@ -41,8 +42,8 @@ export default class extends Vue {
     scene: {
       linesLinks: [],
       nodes: [],//[{"id":1,"position":{"x":-160,"y":293},"type":"card","label":"Ups, no entendí tu mensaje 😯, Por favor intentalo de nuevo.","width":300,"height":150,"leftPort":{"x":0,"y":0},"rightPort":{"x":0,"y":0}},{"id":2,"position":{"x":-746,"y":150},"type":"card","label":"Dinos tu correo electronico","width":300,"height":150,"leftPort":{"x":0,"y":0},"rightPort":{"x":0,"y":0}},{"id":3,"position":{"x":-268,"y":-66},"type":"desicion","label":"El proceso de registro de un nuevo usuario tan solo nos llevara unos poco minutos. ¿Continuamos con el reigistro?","width":200,"height":200,"leftPort":{"x":-40,"y":90},"rightPort":{"x":240,"y":90}},{"id":4,"position":{"x":-747,"y":386},"type":"action","label":"Sava Mail","width":300,"height":100,"leftPort":{"x":0,"y":0},"rightPort":{"x":300,"y":40}}],
-      centerX: 1024,
-      centerY: 140,
+      centerX: 200,
+      centerY: 200,
       scale: 1
     },
     height: 100
@@ -84,6 +85,10 @@ export default class extends Vue {
     }
     if (this.type === "point-start") {
       node = new PointStart(maxID + 1);
+    }
+
+    if (this.type === "label") {
+      node = new LabelText(maxID + 1);
     }
     node.type = this.type;
     node.label = this.label;
