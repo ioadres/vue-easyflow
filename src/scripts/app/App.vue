@@ -79,9 +79,18 @@ export default class extends Vue {
     let node: INode = new General(maxID + 1);
     if (this.type === "desicion") {
       node = new Diamon(maxID + 1);
+      node.custom = {
+        name:"",
+        template:""
+      }
     }
     if (this.type === "action") {
       node = new Action(maxID + 1);
+      node.custom = {
+        name:"",
+        template:{payload:""},
+        action:""
+      }
     }
     if (this.type === "point-start") {
       node = new PointStart(maxID + 1);
@@ -89,6 +98,7 @@ export default class extends Vue {
 
     if (this.type === "label") {
       node = new LabelText(maxID + 1);
+      
     }
     node.type = this.type;
     node.label = this.label;

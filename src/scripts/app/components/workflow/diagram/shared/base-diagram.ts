@@ -1,7 +1,7 @@
 
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { INodeViewScale, INode } from '@/scripts/app/shared/workflow/node.type';
-import { LocationPort } from "../../../shared/workflow/enum";
+import { LocationPort } from "../../../../shared/workflow/enum";
 
 @Component
 export default class BaseDiagram extends Vue {

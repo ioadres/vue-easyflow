@@ -85,11 +85,11 @@
 
 <script lang="ts">
 import LineLink from "./line-link/line-link.component.vue";
-import LabelText from "./label-text/label-text.vue"
-import General from "./general/general.component.vue";
-import Diamond from "./diamon/diamon.component.vue";
-import Action from "./action/action.component.vue";
-import PointStart from "./point-start/point-start.component.vue";
+import LabelText from "./diagram/label-text/label-text.vue"
+import General from "./diagram/general/general.component.vue";
+import Diamond from "./diagram/diamon/diamon.component.vue";
+import Action from "./diagram/action/action.component.vue";
+import PointStart from "./diagram/point-start/point-start.component.vue";
 import PropertyEditor from "./shared/property-editor.vue";
 
 import { getMousePosition } from "../core/position";

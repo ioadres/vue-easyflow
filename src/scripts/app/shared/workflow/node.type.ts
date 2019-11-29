@@ -11,6 +11,7 @@ export interface INode {
     leftPort:IPosition;
     rightPort:IPosition;
     centerPort:IPosition;
+    custom:any;
 
     getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number];
 }
@@ -33,6 +34,7 @@ export class Node implements INode {
     leftPort:IPosition;
     rightPort:IPosition;
     centerPort:IPosition;
+    custom:any;
 
     constructor(id: number | null) {
         this.id = id!;
