@@ -100,8 +100,8 @@ export class General extends Node implements INode {
 
     constructor(id: number | null) {
         super(id);        
-        this.width = 200;
-        this.height = 100;
+        this.width = 350;
+        this.height = 70;
     }
 
     public getPositionNodePort(centerX: number, centerY: number, typePort: string, scale : number): [number, number] {

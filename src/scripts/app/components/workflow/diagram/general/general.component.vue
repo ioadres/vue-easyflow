@@ -9,7 +9,6 @@
   >
     <div class="node-port node-input" @mousedown="inputMouseDown" @mouseup="inputMouseUp"></div>
     <div class="node-main">
-      <div v-text="node.type" class="node-type"></div>
       <div class="node-custom">
         <div v-text="node.label" class="node-label"></div>
       </div>
@@ -38,6 +37,7 @@ $portSize: 12;
   border-top-left-radius: 1.3em;
   border-bottom-right-radius: 1.3em;
   border-top-right-radius: 1.3em;
+  border-bottom-left-radius: 0px;
   background-color: #e4e4e4;
   .node-main {
     text-align: center;
