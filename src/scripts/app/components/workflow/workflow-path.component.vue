@@ -34,6 +34,18 @@
         @nodeSelected="nodeSelected(node.id, $event)"
       ></point-start>
 
+      <point-end
+        :node.sync="node"
+        v-for="(node, index) in getNodesByType('point-end')"
+        :key="`point-end-${index}`"
+        :nodeViewScale="getNodeViewScale"
+        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
+        @linkingStart="linkingNodeStart"
+        @linkingStop="linkingNodeStop"
+        @nodeSelected="nodeSelected(node.id, $event)"
+      ></point-end>
+
       <general
         :node.sync="node"
         v-for="(node, index) in getNodesByType('general')"
@@ -90,6 +102,7 @@ import General from "./diagram/general/general.component.vue";
 import Diamond from "./diagram/diamon/diamon.component.vue";
 import Action from "./diagram/action/action.component.vue";
 import PointStart from "./diagram/point-start/point-start.component.vue";
+import PointEnd from "./diagram/point-end/point-end.component.vue";
 import PropertyEditor from "./shared/property-editor.vue";
 
 import { getMousePosition } from "../core/position";
@@ -112,6 +125,7 @@ import { LocationPort } from "../../shared/workflow/enum";
     General,
     Diamond,
     Action,
+    PointEnd,
     PointStart
   },
   name: "WorkFlowPath"

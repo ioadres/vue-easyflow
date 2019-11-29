@@ -7,6 +7,7 @@
         <option value="action">Action</option>
         <option value="desicion">Desicion</option>
         <option value="point-start">Point Start</option>
+        <option value="point-end">Point End</option>
 
         <option value="label">Label</option>
       </select>
@@ -30,7 +31,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import WorkFlowPath from "./components/workflow/workflow-path.component.vue";
 import { IWorkFlow } from "./shared/workflow/workflow.type";
 import { ILink } from "./shared/workflow/line.type";
-import { Node, INode, General, Diamon, Action, PointStart, LabelText } from "./shared/workflow/node.type";
+import { Node, INode, General, Diamon, Action, PointStart,PointEnd, LabelText } from "./shared/workflow/node.type";
 import { Position } from "./shared/workflow/position.type";
 @Component({
   components: { WorkFlowPath }
@@ -94,6 +95,10 @@ export default class extends Vue {
     }
     if (this.type === "point-start") {
       node = new PointStart(maxID + 1);
+    }
+
+    if (this.type === "point-end") {
+      node = new PointEnd(maxID + 1);
     }
 
     if (this.type === "label") {
