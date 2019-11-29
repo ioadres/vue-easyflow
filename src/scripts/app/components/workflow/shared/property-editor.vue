@@ -1,7 +1,7 @@
 <template>
   <div class="property-container" v-show="isVisible">
     <div class="legend">
-      <span>Propiedades</span>
+      <span>Componente</span>
     </div>
     <div class="property-main">
       <div class="property">
@@ -12,14 +12,14 @@
       </div>
     </div>
     <div class="legend">
-      <span>Custom</span>
+      <span>Propiedades</span>
     </div>
     <div class="property-main">
       <div v-for="(property, index) in properties" :key="`property-${index}`">
         <div class="property" v-if="typeof node.custom[property] !== 'object'">
           <div class="label">{{property}}</div>
           <div class="input">
-            <input :value="node.custom[property]" @input="update(node,propertyChild, $event)" />
+            <input :value="node.custom[property]" @input="update(node.custom,property, $event)" />
           </div>
         </div>
         <div v-else class="object">
