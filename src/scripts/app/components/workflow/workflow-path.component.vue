@@ -295,19 +295,7 @@ export default class extends Vue {
     this.path.saveMouseLastPosition(e);
 
     this.$emit("nodeClick", id);
-  }
-
-  handleMove(e: any) {
-    if (this.linkAction.isDragging) {
-      this.linkMove(e);
-    }
-    if (this.nodeAction.isDragging) {
-      this.nodeMove(e);
-    }
-    if (this.nodeAction.isScrolling) {
-      this.scrollingMove(e);
-    }
-  }
+  } 
 
   handleNodeEntrydelete(nodeToDelete: INode, e: any) {
     if (!this.linkAction.isDragging) {
@@ -340,6 +328,18 @@ export default class extends Vue {
       this.path.saveMouseLastPositionWithOffset(this.$el, e);
     }
     this.$emit("canvasClick", e);
+  }
+
+  handleMove(e: any) {
+    if (this.linkAction.isDragging) {
+      this.linkMove(e);
+    }
+    if (this.nodeAction.isDragging) {
+      this.nodeMove(e);
+    }
+    if (this.nodeAction.isScrolling) {
+      this.scrollingMove(e);
+    }
   }
 
   linkMove(e: any) {
