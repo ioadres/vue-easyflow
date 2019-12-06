@@ -1,5 +1,5 @@
 
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import { INodeViewScale, INode } from '@/scripts/app/shared/workflow/node.type';
 import { LocationPort } from "../../../../shared/workflow/enum";
 
@@ -61,22 +61,7 @@ export default class BaseDiagram extends Vue {
             top: this.node.centerPort.y + "px",
             left: this.node.centerPort.x + "px"
         };
-    }
-
-    deleteHandleUp(e: any) {
-        this.$emit("handleNodeEntrydelete", this.node, e);
-    }
-
-    handleMousedown(e: any) {
-        const target = e.target || e.srcElement;
-        if (
-            target.className.indexOf("node-input") < 0 &&
-            target.className.indexOf("node-output") < 0
-        ) {
-            this.$emit("nodeSelected", e);
-        }
-        e.preventDefault();
-    }
+    }    
 
     handleMouseOver() {
         this.show.delete = true;
@@ -87,6 +72,23 @@ export default class BaseDiagram extends Vue {
     }
 
     inputMouseDown(e: any) {
+        e.preventDefault();
+    }
+
+    @Emit("nodedelete")
+    deleteHandleUp(e: any) {
+        return this.node,e;
+    }
+    
+    @Emit("nodeSelected")
+    handleMousedown(e: any) {
+        const target = e.target || e.srcElement;
+        if (
+            target.className.indexOf("node-input") < 0 &&
+            target.className.indexOf("node-output") < 0
+        ) {
+            return e;
+        }
         e.preventDefault();
     }
 

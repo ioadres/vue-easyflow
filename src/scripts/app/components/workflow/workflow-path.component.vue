@@ -1,9 +1,6 @@
 <template>
   <div>
-
-    <property-editor :isVisible="propertyIsVisible" 
-        :node.sync="nodePropertySelected">
-    </property-editor>
+    <property-editor :isVisible="propertyIsVisible" :node.sync="nodePropertySelected"></property-editor>
 
     <div
       class="flowchart-container"
@@ -27,7 +24,7 @@
         v-for="(node, index) in getNodesByType('point-start')"
         :key="`point-start-${index}`"
         :nodeViewScale="getNodeViewScale"
-        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @nodedelete="handleNodeEntrydelete(node, $event)"
         @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
         @linkingStart="linkingNodeStart"
         @linkingStop="linkingNodeStop"
@@ -39,7 +36,7 @@
         v-for="(node, index) in getNodesByType('point-end')"
         :key="`point-end-${index}`"
         :nodeViewScale="getNodeViewScale"
-        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @nodedelete="handleNodeEntrydelete(node, $event)"
         @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
         @linkingStart="linkingNodeStart"
         @linkingStop="linkingNodeStop"
@@ -51,7 +48,7 @@
         v-for="(node, index) in getNodesByType('general')"
         :key="`general-${index}`"
         :nodeViewScale="getNodeViewScale"
-        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @nodedelete="handleNodeEntrydelete(node, $event)"
         @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
         @linkingStart="linkingNodeStart"
         @linkingStop="linkingNodeStop"
@@ -63,7 +60,7 @@
         v-for="(node, index) in getNodesByType('action')"
         :key="`action-${index}`"
         :nodeViewScale="getNodeViewScale"
-        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @nodedelete="handleNodeEntrydelete(node, $event)"
         @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
         @linkingStart="linkingNodeStart"
         @linkingStop="linkingNodeStop"
@@ -75,7 +72,7 @@
         v-for="(node, index) in getNodesByType('label')"
         :key="`label-${index}`"
         :nodeViewScale="getNodeViewScale"
-        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @nodedelete="handleNodeEntrydelete(node, $event)"
         @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
         @nodeSelected="nodeSelected(node.id, $event)"
       ></label-text>
@@ -85,7 +82,7 @@
         v-for="(node, index) in getNodesByType('desicion')"
         :key="`desicion-${index}`"
         :nodeViewScale="getNodeViewScale"
-        @handleNodeEntrydelete="handleNodeEntrydelete(node, $event)"
+        @nodedelete="handleNodeEntrydelete(node, $event)"
         @handleNodeEntryInput="handleNodeEntryInput(node, $event)"
         @linkingStart="linkingNodeStart"
         @linkingStop="linkingNodeStop"
@@ -97,21 +94,21 @@
 
 <script lang="ts">
 import LineLink from "./line-link/line-link.component.vue";
-import LabelText from "./diagram/label-text/label-text.vue"
+import LabelText from "./diagram/label-text/label-text.vue";
 import General from "./diagram/general/general.component.vue";
 import Diamond from "./diagram/diamon/diamon.component.vue";
 import Action from "./diagram/action/action.component.vue";
 import PointStart from "./diagram/point-start/point-start.component.vue";
 import PointEnd from "./diagram/point-end/point-end.component.vue";
 import PropertyEditor from "./shared/property-editor.vue";
+import { Path } from "@/scripts/app/shared/workflow/path/path";
 
 import { getMousePosition } from "../core/position";
 import { Component, Vue, Prop } from "vue-property-decorator";
 import {
   IWorkFlow,
   NodeAction,
-  LinkAction,
-  Mouse
+  LinkAction
 } from "./../../shared/workflow/workflow.type";
 import { INodeViewScale, INode } from "./../../shared/workflow/node.type";
 import { Line, ILine } from "./../../shared/workflow/line.type";
@@ -135,19 +132,19 @@ export default class extends Vue {
 
   private nodeAction: NodeAction = new NodeAction();
   private linkAction: LinkAction = new LinkAction();
-  private mouse: Mouse = new Mouse();
+  private path: Path = new Path();
 
   get nodePropertySelected() {
-    if(this.nodeAction.selected! > 0 && this.nodeAction.isDragging == false) {
+    if (this.nodeAction.selected! > 0 && this.nodeAction.isDragging == false) {
       return this.workflow.scene.nodes.find(item => {
         return item.id === this.nodeAction.selected;
       });
     }
     return {};
   }
-  get propertyIsVisible(){
+  get propertyIsVisible() {
     return this.nodeAction.selected! > 0 && this.nodeAction.isDragging == false;
-  } 
+  }
 
   get getNodeViewScale() {
     let nodeViewScale: INodeViewScale = {
@@ -294,10 +291,8 @@ export default class extends Vue {
   nodeSelected(id: number, e: any) {
     this.nodeAction.isDragging = true;
     this.nodeAction.selected = id;
-    this.mouse.lastX =
-      e.pageX || e.clientX + document.documentElement.scrollLeft;
-    this.mouse.lastY =
-      e.pageY || e.clientY + document.documentElement.scrollTop;
+
+    this.path.saveMouseLastPosition(e);
 
     this.$emit("nodeClick", id);
   }
@@ -341,49 +336,40 @@ export default class extends Vue {
       e.which === 1
     ) {
       this.nodeAction.isScrolling = true;
-      [this.mouse.lastX, this.mouse.lastY] = getMousePosition(this.$el, e);
       this.nodeAction.selected = null;
+      this.path.saveMouseLastPositionWithOffset(this.$el, e);
     }
     this.$emit("canvasClick", e);
   }
 
   linkMove(e: any) {
-    [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-    [this.linkAction.x, this.linkAction.y] = [this.mouse.x, this.mouse.y];
+    [this.linkAction.x, this.linkAction.y] = this.path.lineLinkMove(
+      this.$el,
+      e
+    );
   }
 
   nodeMove(e: any) {
     let self = this;
 
-    this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft;
-    this.mouse.y = e.pageY || e.clientY + document.documentElement.scrollTop;
-    let diffX = this.mouse.x - this.mouse.lastX;
-    let diffY = this.mouse.y - this.mouse.lastY;
-    this.mouse.lastX = this.mouse.x;
-    this.mouse.lastY = this.mouse.y;
-
     let index = this.workflow.scene.nodes.findIndex(item => {
       return item.id === self.nodeAction.selected;
     });
-    let left =
-      this.workflow.scene.nodes[index].position.x +
-      diffX / this.workflow.scene.scale;
-    let top =
-      this.workflow.scene.nodes[index].position.y +
-      diffY / this.workflow.scene.scale;
 
-    this.workflow.scene.nodes[index].position.x = left;
-    this.workflow.scene.nodes[index].position.y = top;
+    let node = this.workflow.scene.nodes[index];
+    [node.position.x, node.position.y] = this.path.nodeMove(
+      node,
+      this.workflow.scene.scale,
+      this.$el,
+      e
+    );
   }
 
   scrollingMove(e: any) {
-    [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-    let diffX = this.mouse.x - this.mouse.lastX;
-    let diffY = this.mouse.y - this.mouse.lastY;
-    this.mouse.lastX = this.mouse.x;
-    this.mouse.lastY = this.mouse.y;
-    this.workflow.scene.centerX += diffX;
-    this.workflow.scene.centerY += diffY;
+    let left, top;
+    [left, top] = this.path.scrollingMove(this.$el, e);
+    this.workflow.scene.centerX += left;
+    this.workflow.scene.centerY += top;
   }
 }
 </script>

@@ -12,7 +12,7 @@ function getOffsetRect (element: any) {
   }
 
 
-  function getMousePosition (element: any, event:any) {
+  function getMousePosition (element: any, event:any) : [number,number] {
     let mouseX = event.pageX || event.clientX + document.documentElement.scrollLeft
     let mouseY = event.pageY || event.clientY + document.documentElement.scrollTop
   
